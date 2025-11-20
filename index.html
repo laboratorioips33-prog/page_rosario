@@ -314,9 +314,9 @@
 
                     <div class="form-group">
                         <label for="fiscal_regime"><i class="fas fa-balance-scale"></i> Régimen Fiscal *</label>
-                        <select id="fiscal_regimes" class="form-control regimen-select" required multiple size="4">
-                            <option value="">Selecciona un régimen fiscal</option>
+                        <select id="fiscal_regimes" class="form-control regimen-select" multiple required>
                         </select>
+                        <small style="color: gray;">Se guardarán todos los seleccionados.</small>
                     </div>
 
                     <div class="form-group">
@@ -524,11 +524,12 @@
         /* --------------------------
         GUARDAR DATOS
         ----------------------------*/
+        /* --------------------------
+        GUARDAR DATOS (CORREGIDO)
+        ----------------------------*/
         async function saveEmisorData() {
 
-            const formData = new FormData(emisorForm);
-
-            // Obtener varios regímenes seleccionados
+            // 1. Obtener los regímenes seleccionados (Lista de códigos)
             const selectedRegimes = Array.from(
                 document.querySelectorAll('#fiscal_regimes option:checked')
             ).map(opt => opt.value);
@@ -538,31 +539,30 @@
                 return;
             }
 
+            // 2. Construir el objeto JSON manualmente (Porque los inputs no tienen 'name')
+            // NOTA: Las claves de 'address' deben empezar con Mayúscula para compatibilidad con Facturama
             const emisorData = {
-                phone_number: formData.get("phone_number"),
-                rfc: formData.get("rfc"),
-                name: formData.get("name"),
-                fiscal_regimes: selectedRegimes,
-                zip_code: formData.get("zip_code"),
+                phone_number: document.getElementById('phone_number').value,
+                rfc: document.getElementById('rfc').value,
+                name: document.getElementById('name').value,
+                fiscal_regimes: selectedRegimes, // Enviamos lista ["601", "612"]
+                zip_code: document.getElementById('zip_code').value,
+                
                 address: {
-                    street: formData.get("street"),
-                    exterior_number: formData.get("exterior_number"),
-                    interior_number: formData.get("interior_number"),
-                    neighborhood: formData.get("neighborhood"),
-                    city: formData.get("city"),
-                    state: formData.get("state"),
-                    country: formData.get("country")
+                    Street: document.getElementById('street').value,
+                    ExteriorNumber: document.getElementById('exterior_number').value,
+                    InteriorNumber: document.getElementById('interior_number').value,
+                    Neighborhood: document.getElementById('neighborhood').value,
+                    Municipality: document.getElementById('city').value, // Facturama usa Municipality
+                    State: document.getElementById('state').value,
+                    Country: document.getElementById('country').value,
+                    ZipCode: document.getElementById('zip_code').value
                 }
             };
 
-            // Validación mínima
-            if (!emisorData.phone_number ||
-                !emisorData.rfc ||
-                !emisorData.name ||
-                !emisorData.zip_code ||
-                emisorData.fiscal_regimes.length === 0) {
-
-                showAlert("Por favor completa todos los campos obligatorios.", "error");
+            // 3. Validación
+            if (!emisorData.phone_number || !emisorData.rfc || !emisorData.name || !emisorData.zip_code) {
+                showAlert("Por favor completa todos los campos obligatorios (*).", "error");
                 return;
             }
 
@@ -575,13 +575,18 @@
                     body: JSON.stringify(emisorData)
                 });
 
-                if (!response.ok) throw new Error("Error al guardar");
+                if (!response.ok) {
+                    const err = await response.json();
+                    throw new Error(err.detail || "Error al guardar");
+                }
 
                 const result = await response.json();
                 showAlert(result.message || "Emisor guardado correctamente", "success");
 
-                emisorForm.reset();
-                fiscalRegimeSelect.innerHTML = "";
+                // Opcional: Limpiar formulario tras éxito
+                // emisorForm.reset();
+                // fiscalRegimeSelect.innerHTML = "";
+                // extractedDataCard.classList.add('hidden');
 
             } catch (e) {
                 showAlert("Error al guardar: " + e.message, "error");
