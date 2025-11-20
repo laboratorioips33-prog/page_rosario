@@ -470,27 +470,55 @@
         /* --------------------------
         LLENAR FORMULARIO
         ----------------------------*/
+
         function populateForm(data) {
+            // Llenar campos de texto básicos
             document.getElementById('rfc').value = data.rfc || '';
             document.getElementById('name').value = data.name || '';
             document.getElementById('zip_code').value = data.zip_code || '';
 
+            // Manejo de dirección (con validación para evitar errores si viene vacía)
             const address = data.address || {};
             document.getElementById('street').value = address.Street || '';
             document.getElementById('exterior_number').value = address.ExteriorNumber || '';
             document.getElementById('interior_number').value = address.InteriorNumber || '';
             document.getElementById('neighborhood').value = address.Neighborhood || '';
-            document.getElementById('city').value = address.City || '';
+            
+            // Ajuste: Facturama/SAT usa 'Municipality', tu form usa 'city'
+            document.getElementById('city').value = address.City || address.Municipality || ''; 
+            
             document.getElementById('state').value = address.State || '';
-            document.getElementById('country').value = address.Country || '';
+            document.getElementById('country').value = address.Country || 'MX'; 
 
-            fiscalRegimeSelect.innerHTML = "";
-            data.regimenes_disponibles.forEach(r => {
-                const opt = document.createElement('option');
-                opt.value = r;
-                opt.textContent = r;
-                fiscalRegimeSelect.appendChild(opt);
-            });
+            // --- AQUÍ ESTÁ LA CORRECCIÓN DEL ERROR [object Object] ---
+            const fiscalRegimeSelect = document.getElementById('fiscal_regimes');
+            fiscalRegimeSelect.innerHTML = ""; // Limpiar opciones anteriores
+            
+            if (data.regimenes_disponibles && Array.isArray(data.regimenes_disponibles)) {
+                data.regimenes_disponibles.forEach(r => {
+                    const opt = document.createElement('option');
+                    
+                    // Verificamos si 'r' es un objeto (lo que causa el error) o un texto simple
+                    if (typeof r === 'object' && r !== null) {
+                        // CORRECTO: Usamos las propiedades internas
+                        opt.value = r.codigo; 
+                        opt.textContent = `${r.codigo} - ${r.descripcion}`; 
+                    } else {
+                        // Fallback por si llega como texto simple
+                        opt.value = r;
+                        opt.textContent = r;
+                    }
+                    
+                    // Seleccionar automáticamente si coincide con el sugerido
+                    if (data.fiscal_regime_suggested && 
+                    (r.codigo === data.fiscal_regime_suggested || r === data.fiscal_regime_suggested)) {
+                        opt.selected = true;
+                    }
+                    
+                    fiscalRegimeSelect.appendChild(opt);
+                });
+            }
+            // ---------------------------------------------------------
         }
 
         /* --------------------------
