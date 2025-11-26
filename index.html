@@ -577,28 +577,33 @@
         }
 
         function displayEconomicActivities(activities) {
-            economicActivitiesContainer.innerHTML = '';
+        economicActivitiesContainer.innerHTML = '';
+        
+        if (activities && activities.length > 0) {
+            noActivitiesMsg.style.display = 'none';
             
-            if (activities && activities.length > 0) {
-                noActivitiesMsg.style.display = 'none';
+            activities.forEach(activity => {
+                const activityItem = document.createElement('div');
+                activityItem.className = 'activity-item';
                 
-                // Iterar sobre la lista de strings
-                activities.forEach(activity => {
-                    const activityItem = document.createElement('div');
-                    activityItem.className = 'activity-item';
-                    
-                    // Mostrar el string directamente
-                    activityItem.innerHTML = `
-                        <i class="fas fa-chart-line"></i>
-                        <span>${activity}</span>
-                    `;
-                    
-                    economicActivitiesContainer.appendChild(activityItem);
-                });
-            } else {
-                noActivitiesMsg.style.display = 'block';
-            }
+                // --- LIMPIEZA DEL STRING ---
+                // Eliminar llaves {}, comillas simples ', y espacios extra
+                let cleanedActivity = String(activity)
+                    .replace(/{|}|'/g, '')  // Elimina {, }, '
+                    .trim();               // Elimina espacios al inicio y final
+                
+                // Mostrar el string limpio
+                activityItem.innerHTML = `
+                    <i class="fas fa-chart-line"></i>
+                    <span>${cleanedActivity}</span>
+                `;
+                
+                economicActivitiesContainer.appendChild(activityItem);
+            });
+        } else {
+            noActivitiesMsg.style.display = 'block';
         }
+    }
 
         /* --------------------------
         GUARDAR DATOS (CORREGIDO)
