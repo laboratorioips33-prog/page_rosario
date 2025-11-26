@@ -582,29 +582,15 @@
             if (activities && activities.length > 0) {
                 noActivitiesMsg.style.display = 'none';
                 
-                // Si activities es un objeto, convertirlo a array
-                let activitiesArray = activities;
-                if (typeof activities === 'object' && !Array.isArray(activities)) {
-                    activitiesArray = Object.values(activities);
-                }
-                
-                activitiesArray.forEach(activity => {
+                // Iterar sobre la lista de strings
+                activities.forEach(activity => {
                     const activityItem = document.createElement('div');
                     activityItem.className = 'activity-item';
                     
-                    // Procesar la actividad (puede ser objeto o string)
-                    let activityText = '';
-                    if (typeof activity === 'object' && activity !== null) {
-                        activityText = activity.codigo ? 
-                            `<strong>${activity.codigo}</strong> - ${activity.descripcion}` : 
-                            activity.descripcion || JSON.stringify(activity);
-                    } else {
-                        activityText = activity;
-                    }
-                    
+                    // Mostrar el string directamente
                     activityItem.innerHTML = `
                         <i class="fas fa-chart-line"></i>
-                        <span>${activityText}</span>
+                        <span>${activity}</span>
                     `;
                     
                     economicActivitiesContainer.appendChild(activityItem);
