@@ -800,35 +800,51 @@
                 };
 
                 xhr.onload = function() {
+                    // 1. Reactivar botones siempre, pase lo que pase
                     csdUploadBtn.disabled = false;
                     csdUploadBtn.classList.remove('btn-loading');
 
-                    // Intentamos leer la respuesta siempre, sea éxito o error
+                    // 2. Intentar parsear la respuesta JSON del servidor
                     let responseObj = null;
                     try {
                         responseObj = JSON.parse(xhr.responseText);
                     } catch (e) {
-                        console.error("No se pudo parsear el JSON de respuesta", e);
+                        console.error("La respuesta no es un JSON válido:", xhr.responseText);
                     }
 
+                    // 3. Evaluar el Código de Estado HTTP
                     if (xhr.status >= 200 && xhr.status < 300) {
-                        // --- ÉXITO ---
-                        if (responseObj && responseObj.status === 'success') {
-                            showCsdAlert('CSD cargado correctamente.', 'success');
-                            csdForm.reset();
-                            csdProgressBar.style.width = '100%';
-                            csdProgressText.textContent = '100%';
-                        } else {
-                            // Si el status HTTP es 200 pero el backend mandó error lógico
-                            let msg = (responseObj && responseObj.message) ? responseObj.message : 'Error desconocido en servidor';
-                            showCsdAlert(msg, 'error');
-                        }
+                        // --- ÉXITO (HTTP 200) ---
+                        // Tu backend envía: {"status": "success", "message": "...", "data": ...}
+                        const msgSuccess = (responseObj && responseObj.message) ? responseObj.message : 'CSD cargado correctamente.';
+                        
+                        showCsdAlert(msgSuccess, 'success');
+                        csdForm.reset();
+                        csdProgressBar.style.width = '100%';
+                        csdProgressText.textContent = '100%';
+
                     } else {
-                        if (responseObj && responseObj.message) {
-                            showCsdAlert(responseObj.message, 'error');
+                        // --- ERROR (HTTP 400, 404, 500, etc.) ---
+                        let msgError = 'Ocurrió un error al subir los archivos.';
+
+                        if (responseObj) {
+                            // Opción A: Tu backend manejó el error y envió "message" (Ej: "Ya existe un CSD...")
+                            if (responseObj.message) {
+                                msgError = responseObj.message;
+                            } 
+                            // Opción B: Error de validación automático de FastAPI (manda "detail")
+                            else if (responseObj.detail) {
+                                // A veces detail es un array, a veces texto
+                                msgError = typeof responseObj.detail === 'string' 
+                                    ? responseObj.detail 
+                                    : JSON.stringify(responseObj.detail);
+                            }
                         } else {
-                            showCsdAlert('Error en la subida: ' + xhr.status + ' ' + xhr.statusText, 'error');
+                            // Opción C: Falló tanto que ni siquiera hay JSON (Ej: Nginx 502 Bad Gateway)
+                            msgError = `Error del servidor (${xhr.status}): ${xhr.statusText}`;
                         }
+
+                        showCsdAlert(msgError, 'error');
                     }
                 };
 
