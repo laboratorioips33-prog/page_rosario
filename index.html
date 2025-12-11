@@ -803,22 +803,32 @@
                     csdUploadBtn.disabled = false;
                     csdUploadBtn.classList.remove('btn-loading');
 
+                    // Intentamos leer la respuesta siempre, sea éxito o error
+                    let responseObj = null;
+                    try {
+                        responseObj = JSON.parse(xhr.responseText);
+                    } catch (e) {
+                        console.error("No se pudo parsear el JSON de respuesta", e);
+                    }
+
                     if (xhr.status >= 200 && xhr.status < 300) {
-                        try {
-                            const res = JSON.parse(xhr.responseText);
-                            if (res.status === 'success') {
-                                showCsdAlert('CSD cargado correctamente.', 'success');
-                                csdForm.reset();
-                                csdProgressBar.style.width = '100%';
-                                csdProgressText.textContent = '100%';
-                            } else {
-                                showCsdAlert(res.message || 'Error en servidor', 'error');
-                            }
-                        } catch (err) {
-                            showCsdAlert('Respuesta inválida del servidor.', 'error');
+                        // --- ÉXITO ---
+                        if (responseObj && responseObj.status === 'success') {
+                            showCsdAlert('CSD cargado correctamente.', 'success');
+                            csdForm.reset();
+                            csdProgressBar.style.width = '100%';
+                            csdProgressText.textContent = '100%';
+                        } else {
+                            // Si el status HTTP es 200 pero el backend mandó error lógico
+                            let msg = (responseObj && responseObj.message) ? responseObj.message : 'Error desconocido en servidor';
+                            showCsdAlert(msg, 'error');
                         }
                     } else {
-                        showCsdAlert('Error en la subida: ' + xhr.status + ' ' + xhr.statusText, 'error');
+                        if (responseObj && responseObj.message) {
+                            showCsdAlert(responseObj.message, 'error');
+                        } else {
+                            showCsdAlert('Error en la subida: ' + xhr.status + ' ' + xhr.statusText, 'error');
+                        }
                     }
                 };
 
