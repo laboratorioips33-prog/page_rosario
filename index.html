@@ -408,12 +408,53 @@
     </div>
 
 
-    <div class="cargar_csd">
-        <header>
-            <h1><i class="fas fa-file-pdf"></i>Certificado de Sello Digital</h1>
-            <p>Sube tus CSD para poder usar a Rosario - IA Factura</p>
-        </header>
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-shield-alt"></i>
+            <h2>Subir Certificado de Sello Digital (CSD)</h2>
+        </div>
+        <div class="card-body">
+            <p style="color:var(--gray); margin-bottom:12px;">Sube el certificado (.cer) y la llave privada (.key) junto con la contraseña para registrarlos en el sistema.</p>
+
+            <form id="csdForm">
+                <div class="form-group">
+                    <label for="csd_rfc">RFC Emisor *</label>
+                    <input id="csd_rfc" name="Rfc_Emisor" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="csd_password">Contraseña Private Key *</label>
+                    <input id="csd_password" name="PrivateKeyPassword" type="password" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="csd_cert">Certificado (.cer) *</label>
+                    <input id="csd_cert" name="Certificate" type="file" accept=".cer,.crt" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="csd_key">Llave privada (.key) *</label>
+                    <input id="csd_key" name="PrivateKey" type="file" accept=".key,.pem" class="form-control" required>
+                </div>
+
+                <div class="form-group" style="margin-top: 15px;">
+                    <button type="submit" class="btn btn-secondary" id="csdUploadBtn">
+                        <i class="fas fa-cloud-upload-alt"></i> Subir CSD
+                    </button>
+
+                    <div id="csdProgress" class="hidden" style="margin-top:10px;">
+                        <div style="background:#e9ecef;border-radius:8px;overflow:hidden;">
+                            <div id="csdProgressBar" style="height:12px;width:0%;background:var(--primary);"></div>
+                        </div>
+                        <small id="csdProgressText" style="color:var(--gray)"></small>
+                    </div>
+                </div>
+
+                <div id="csdAlerts"></div>
+            </form>
+        </div>
     </div>
+
 
    <script>
     document.addEventListener('DOMContentLoaded', function() {
@@ -704,6 +745,93 @@
                                     : '<i class="fas fa-folder-open"></i> Seleccionar Archivo';
                 btn.classList.remove('btn-loading');
                 btn.disabled = false;
+            }
+        }
+
+        /* --------------------------
+           SUBIDA DE CSD (FORM)
+           ----------------------------*/
+        const csdForm = document.getElementById('csdForm');
+        if (csdForm) {
+            const csdUploadBtn = document.getElementById('csdUploadBtn');
+            const csdProgress = document.getElementById('csdProgress');
+            const csdProgressBar = document.getElementById('csdProgressBar');
+            const csdProgressText = document.getElementById('csdProgressText');
+            const csdAlerts = document.getElementById('csdAlerts');
+
+            csdForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const rfc = document.getElementById('csd_rfc').value.trim();
+                const pwd = document.getElementById('csd_password').value;
+                const certInput = document.getElementById('csd_cert');
+                const keyInput = document.getElementById('csd_key');
+
+                if (!rfc || !pwd || !certInput.files.length || !keyInput.files.length) {
+                    showCsdAlert('Completa todos los campos requeridos.', 'error');
+                    return;
+                }
+
+                const formData = new FormData();
+                formData.append('Rfc_Emisor', rfc);
+                formData.append('PrivateKeyPassword', pwd);
+                formData.append('Certificate', certInput.files[0]);
+                formData.append('PrivateKey', keyInput.files[0]);
+
+                csdUploadBtn.disabled = true;
+                csdUploadBtn.classList.add('btn-loading');
+                csdProgress.classList.remove('hidden');
+                csdProgressBar.style.width = '0%';
+                csdProgressText.textContent = '';
+
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', ' https://39231d3ea1f7.ngrok-free.app/csd_upload', true);
+
+                xhr.upload.onprogress = function(ev) {
+                    if (ev.lengthComputable) {
+                        const pct = Math.round((ev.loaded / ev.total) * 100);
+                        csdProgressBar.style.width = pct + '%';
+                        csdProgressText.textContent = pct + '%';
+                    }
+                };
+
+                xhr.onload = function() {
+                    csdUploadBtn.disabled = false;
+                    csdUploadBtn.classList.remove('btn-loading');
+
+                    if (xhr.status >= 200 && xhr.status < 300) {
+                        try {
+                            const res = JSON.parse(xhr.responseText);
+                            if (res.status === 'success') {
+                                showCsdAlert('CSD cargado correctamente.', 'success');
+                                csdForm.reset();
+                                csdProgressBar.style.width = '100%';
+                                csdProgressText.textContent = '100%';
+                            } else {
+                                showCsdAlert(res.message || 'Error en servidor', 'error');
+                            }
+                        } catch (err) {
+                            showCsdAlert('Respuesta inválida del servidor.', 'error');
+                        }
+                    } else {
+                        showCsdAlert('Error en la subida: ' + xhr.status + ' ' + xhr.statusText, 'error');
+                    }
+                };
+
+                xhr.onerror = function() {
+                    csdUploadBtn.disabled = false;
+                    csdUploadBtn.classList.remove('btn-loading');
+                    showCsdAlert('Error de red durante la subida.', 'error');
+                };
+
+                xhr.send(formData);
+            });
+
+            function showCsdAlert(msg, type) {
+                if (csdAlerts) {
+                    csdAlerts.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+                    setTimeout(() => { if (csdAlerts) csdAlerts.innerHTML = ''; }, 6000);
+                }
             }
         }
     });
