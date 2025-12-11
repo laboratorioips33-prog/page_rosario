@@ -569,7 +569,11 @@
 
         function populateForm(data) {
             // Llenar campos de texto básicos
-            document.getElementById('rfc').value = data.rfc || '';
+            const extractedRfc = data.rfc || '';
+            document.getElementById('rfc').value = extractedRfc;
+            // Autocompletar el RFC en el formulario de subida CSD si existe
+            const csdRfcEl = document.getElementById('csd_rfc');
+            if (csdRfcEl) csdRfcEl.value = extractedRfc;
             document.getElementById('name').value = data.name || '';
             document.getElementById('zip_code').value = data.zip_code || '';
 
