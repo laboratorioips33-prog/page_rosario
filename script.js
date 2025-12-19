@@ -1,5 +1,5 @@
 // CONFIGURACIÓN
-const API_URL = "https://2660ee008f84.ngrok-free.app//api";
+const API_URL = "https://2660ee008f84.ngrok-free.app/api";
 
 document.addEventListener('DOMContentLoaded', function() {
     
