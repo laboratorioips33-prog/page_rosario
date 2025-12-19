@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Te Facturo</title>
+    <title>Yo Te Facturo - Acceso</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -15,91 +15,120 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-file-invoice-dollar"></i> Yo Te Facturo</h1>
-            <p>Gestiona tus facturas, extrae datos fiscales y administra tus emisores.</p>
         </header>
 
-        <div class="main-nav">
-            <button class="nav-btn active" onclick="switchView('tools')">
-                <i class="fas fa-tools"></i> Herramientas
-            </button>
-            <button class="nav-btn" onclick="switchView('account')">
-                <i class="fas fa-user-circle"></i> Mi Cuenta
-            </button>
-        </div>
-
-        <div id="view-tools" class="main-view active">
-            <div class="card">
-                <div class="card-header"><i class="fas fa-file-pdf"></i> <h2>Extractor de Datos</h2></div>
-                <div class="card-body">
-                    <p class="text-center text-muted">Utiliza esta herramienta para extraer datos de constancias fiscales.</p>
-                    <button class="btn w-100" id="selectFileBtn">Seleccionar PDF</button>
-                    <input type="file" id="fileInput" class="hidden">
-                </div>
+        <div id="view-login" class="card main-view active">
+            <div class="card-header bg-primary">
+                <i class="fas fa-sign-in-alt"></i> <h2>Iniciar Sesión</h2>
+            </div>
+            <div class="card-body">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="loginEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="loginPass" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Entrar</button>
+                </form>
+                <p class="mt-3 text-center">
+                    ¿No tienes cuenta? <a href="#" onclick="switchView('register')">Regístrate aquí</a>
+                </p>
             </div>
         </div>
 
-        <div id="view-account" class="main-view hidden">
-            
-            <div id="login-screen" class="card text-center" style="max-width: 400px; margin: 0 auto;">
-                <div class="card-header bg-secondary">
-                    <i class="fas fa-sign-in-alt"></i> <h2>Iniciar Sesión</h2>
+        <div id="view-register" class="card main-view hidden">
+            <div class="card-header bg-secondary">
+                <i class="fas fa-user-plus"></i> <h2>Crear Cuenta</h2>
+            </div>
+            <div class="card-body">
+                <form id="registerForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Nombre</label>
+                            <input type="text" id="regName" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Apellidos</label>
+                            <input type="text" id="regLastName" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>Número Celular (WhatsApp)</label>
+                        <input type="tel" id="regPhone" class="form-control" placeholder="5512345678" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Correo Electrónico</label>
+                        <input type="email" id="regEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Contraseña</label>
+                        <input type="password" id="regPass" class="form-control" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
+                </form>
+                <p class="mt-3 text-center">
+                    ¿Ya tienes cuenta? <a href="#" onclick="switchView('login')">Inicia sesión</a>
+                </p>
+            </div>
+        </div>
+
+        <div id="view-verify" class="card main-view hidden text-center">
+            <div class="card-header bg-warning">
+                <i class="fas fa-mobile-alt"></i> <h2>Verificar WhatsApp</h2>
+            </div>
+            <div class="card-body">
+                <p>Hola <b id="verifyName"></b>. Registraste el número <b id="verifyPhone"></b>.</p>
+                <p>Para proteger tu información, necesitamos confirmar que es tuyo.</p>
+                
+                <div class="instruction-box">
+                    1. Abre nuestro chat en WhatsApp.<br>
+                    2. Ve a <b>Menú Admin > Opción 6</b>.<br>
+                    3. Envía el siguiente código:
                 </div>
-                <div class="card-body">
-                    <p>Accede para ver tus facturas y configuraciones.</p>
-                    <button class="btn btn-google w-100" onclick="loginWithGoogle()">
-                        <i class="fab fa-google"></i> Continuar con Google
-                    </button>
+
+                <div class="code-box" id="verificationCode">Cargando...</div>
+                
+                <div class="spinner mt-3"></div>
+                <p class="text-muted small">Esperando confirmación...</p>
+                
+                <button class="btn btn-sm btn-danger mt-3" onclick="logout()">Cerrar Sesión</button>
+            </div>
+        </div>
+
+        <div id="view-dashboard" class="main-view hidden">
+            <div class="dashboard-header">
+                <h3>Hola, <span id="dashUser">Usuario</span></h3>
+                <button class="btn btn-sm btn-danger" onclick="logout()">Salir</button>
+            </div>
+
+            <div class="dashboard-tabs">
+                <button class="dash-tab active" onclick="openTab('facturas')">Facturas</button>
+                <button class="dash-tab" onclick="openTab('emisores')">Emisores</button>
+            </div>
+
+            <div id="tab-facturas" class="dash-content active">
+                <div class="card">
+                    <div class="card-body table-responsive">
+                        <table class="table" id="tableFacturas">
+                            <thead><tr><th>Folio</th><th>Receptor</th><th>Total</th><th>Estado</th><th>PDF</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div id="link-screen" class="card text-center hidden" style="max-width: 500px; margin: 0 auto;">
-                <div class="card-header">
-                    <i class="fas fa-link"></i> <h2>Vincular WhatsApp</h2>
-                </div>
-                <div class="card-body">
-                    <p>Hola <span id="userNameSpan"></span>. Para ver tus datos, necesitamos conectar tu WhatsApp.</p>
-                    <p class="small text-muted">Ve al Bot > Menú Admin > Opción 6 e ingresa este código:</p>
-                    
-                    <div class="code-box" id="codeDisplay">
-                        <span id="generatedCode">Cargando...</span>
-                    </div>
-                    <div id="pollingSpinner" class="spinner hidden"></div>
-                </div>
-            </div>
-
-            <div id="dashboard-screen" class="hidden">
-                <div class="dashboard-header">
-                    <h3>Hola, <span id="dashUserName">Usuario</span></h3>
-                    <button class="btn btn-sm btn-danger" onclick="logout()">Salir</button>
-                </div>
-                
-                <div class="dashboard-tabs">
-                    <button class="dash-tab active" onclick="openDashTab('tabFacturas')">Facturas</button>
-                    <button class="dash-tab" onclick="openDashTab('tabEmisores')">Emisores</button>
-                </div>
-
-                <div id="tabFacturas" class="dash-content active">
-                    <div class="card">
-                        <div class="card-body table-responsive">
-                            <table class="table" id="tableFacturas">
-                                <thead><tr><th>Folio</th><th>Receptor</th><th>Total</th><th>Estado</th><th>PDF</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
+            <div id="tab-emisores" class="dash-content">
+                <div class="card">
+                    <div class="card-body table-responsive">
+                        <table class="table" id="tableEmisores">
+                            <thead><tr><th>RFC</th><th>Nombre</th><th>Acción</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
-                
-                <div id="tabEmisores" class="dash-content">
-                    <div class="card">
-                        <div class="card-body table-responsive">
-                            <table class="table" id="tableEmisores">
-                                <thead><tr><th>RFC</th><th>Nombre</th><th>Acción</th></tr></thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </div>
 
