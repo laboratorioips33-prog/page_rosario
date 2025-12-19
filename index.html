@@ -3,135 +3,364 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yo Te Facturo - Acceso</title>
+    <title>Factura IA - Automatización Fiscal</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
 </head>
 <body>
 
-    <div class="container">
-        <header>
-            <h1><i class="fas fa-file-invoice-dollar"></i> Yo Te Facturo</h1>
+    <div id="landing-page">
+        <nav class="navbar">
+            <div class="container nav-container">
+                <div class="logo">
+                    <i class="fas fa-bolt"></i> Factura IA
+                </div>
+                <div class="nav-buttons">
+                    <button class="btn btn-transparent" onclick="goToLogin()">Iniciar Sesión</button>
+                    <button class="btn btn-primary" onclick="goToRegister()">Registrarse</button>
+                </div>
+            </div>
+        </nav>
+
+        <header class="hero-section">
+            <div class="container hero-container">
+                <div class="hero-content">
+                    <h1>Automatiza tu facturación con <span class="gradient-text">inteligencia artificial</span></h1>
+                    <p>Sube tus archivos y deja que Factura-IA complete tu información fiscal, genere emisores, cree facturas y haga el trabajo por ti.</p>
+                    <button class="btn btn-lg btn-success pulse-animation" onclick="goToRegister()">
+                        Comenzar ahora <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="hero-image">
+                    <img src="hero-bg.jpg" alt="Facturación Inteligente" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80'">
+                </div>
+            </div>
         </header>
 
-        <div id="view-login" class="card main-view active">
-            <div class="card-header bg-primary">
-                <i class="fas fa-sign-in-alt"></i> <h2>Iniciar Sesión</h2>
-            </div>
-            <div class="card-body">
-                <form id="loginForm">
-                    <div class="form-group">
-                        <label>Correo Electrónico</label>
-                        <input type="email" id="loginEmail" class="form-control" required>
+        <section class="features-section">
+            <div class="container">
+                <h2 class="section-title text-center">Características principales</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="icon-box"><i class="fas fa-file-invoice"></i></div>
+                        <h3>Lectura de CSF</h3>
+                        <p>Sube tu constancia y obtenemos RFC, nombre, régimen y domicilio automáticamente.</p>
                     </div>
-                    <div class="form-group">
-                        <label>Contraseña</label>
-                        <input type="password" id="loginPass" class="form-control" required>
+                    <div class="feature-card">
+                        <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+                        <h3>Sube tu información Fiscal!</h3>
+                        <p>Carga tus archivos para timbrado (CSD y Llave). Guardamos todo de forma segura.</p>
                     </div>
-                    <button type="submit" class="btn btn-success w-100">Entrar</button>
-                </form>
-                <p class="mt-3 text-center">
-                    ¿No tienes cuenta? <a href="#" onclick="switchView('register')">Regístrate aquí</a>
-                </p>
+                    <div class="feature-card">
+                        <div class="icon-box"><i class="fas fa-robot"></i></div>
+                        <h3>Facturación inteligente</h3>
+                        <p>Genera CFDI, Notas de crédito y complementos de pago desde nuestra IA.</p>
+                    </div>
+                </div>
             </div>
-        </div>
+        </section>
 
-        <div id="view-register" class="card main-view hidden">
-            <div class="card-header bg-secondary">
-                <i class="fas fa-user-plus"></i> <h2>Crear Cuenta</h2>
+        <section class="how-it-works">
+            <div class="container">
+                <h2 class="section-title text-center text-white">¿Cómo funciona?</h2>
+                <div class="steps-container">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <p>Sube tu CSF (PDF)</p>
+                    </div>
+                    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <p>Sube certificado y llave</p>
+                    </div>
+                    <div class="arrow"><i class="fas fa-chevron-right"></i></div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <p>Genera CFDI con IA</p>
+                    </div>
+                </div>
             </div>
-            <div class="card-body">
-                <form id="registerForm">
-                    <div class="form-row">
+        </section>
+
+        <footer class="landing-footer">
+            <div class="container footer-content">
+                <div class="copyright">
+                    © 2025 Factura-IA. Todos los derechos reservados.
+                </div>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-whatsapp"></i></a>
+                </div>
+                <div class="legal-links">
+                    <a href="#">Términos y Condiciones</a>
+                    <a href="#">Política de Privacidad</a>
+                </div>
+            </div>
+        </footer>
+    </div> <div id="auth-container" class="auth-wrapper hidden">
+        <div class="container" style="max-width: 450px; margin-top: 50px;">
+            <button onclick="goToHome()" class="btn-back"><i class="fas fa-arrow-left"></i> Volver al Inicio</button>
+
+            <header class="text-center mb-4">
+                <h1 class="auth-title" style="color: var(--primary); font-weight: 800;"><i class="fas fa-bolt"></i> Factura IA</h1>
+                <p class="text-muted">Gestión inteligente de CFDI</p>
+            </header>
+
+            <div id="view-login" class="card auth-card">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Iniciar Sesión</h3>
+                    <form id="loginForm">
                         <div class="form-group">
-                            <label>Nombre</label>
-                            <input type="text" id="regName" class="form-control" required>
+                            <label>Correo Electrónico</label>
+                            <input type="email" id="loginEmail" class="form-control" required>
                         </div>
                         <div class="form-group">
-                            <label>Apellidos</label>
-                            <input type="text" id="regLastName" class="form-control" required>
+                            <label>Contraseña</label>
+                            <input type="password" id="loginPass" class="form-control" required>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label>Número Celular (WhatsApp)</label>
-                        <input type="tel" id="regPhone" class="form-control" placeholder="5512345678" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Correo Electrónico</label>
-                        <input type="email" id="regEmail" class="form-control" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Contraseña</label>
-                        <input type="password" id="regPass" class="form-control" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary w-100">Registrarse</button>
-                </form>
-                <p class="mt-3 text-center">
-                    ¿Ya tienes cuenta? <a href="#" onclick="switchView('login')">Inicia sesión</a>
-                </p>
-            </div>
-        </div>
-
-        <div id="view-verify" class="card main-view hidden text-center">
-            <div class="card-header bg-warning">
-                <i class="fas fa-mobile-alt"></i> <h2>Verificar WhatsApp</h2>
-            </div>
-            <div class="card-body">
-                <p>Hola <b id="verifyName"></b>. Registraste el número <b id="verifyPhone"></b>.</p>
-                <p>Para proteger tu información, necesitamos confirmar que es tuyo.</p>
-                
-                <div class="instruction-box">
-                    1. Abre nuestro chat en WhatsApp.<br>
-                    2. Ve a <b>Menú Admin > Opción 6</b>.<br>
-                    3. Envía el siguiente código:
-                </div>
-
-                <div class="code-box" id="verificationCode">Cargando...</div>
-                
-                <div class="spinner mt-3"></div>
-                <p class="text-muted small">Esperando confirmación...</p>
-                
-                <button class="btn btn-sm btn-danger mt-3" onclick="logout()">Cerrar Sesión</button>
-            </div>
-        </div>
-
-        <div id="view-dashboard" class="main-view hidden">
-            <div class="dashboard-header">
-                <h3>Hola, <span id="dashUser">Usuario</span></h3>
-                <button class="btn btn-sm btn-danger" onclick="logout()">Salir</button>
-            </div>
-
-            <div class="dashboard-tabs">
-                <button class="dash-tab active" onclick="openTab('facturas')">Facturas</button>
-                <button class="dash-tab" onclick="openTab('emisores')">Emisores</button>
-            </div>
-
-            <div id="tab-facturas" class="dash-content active">
-                <div class="card">
-                    <div class="card-body table-responsive">
-                        <table class="table" id="tableFacturas">
-                            <thead><tr><th>Folio</th><th>Receptor</th><th>Total</th><th>Estado</th><th>PDF</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
-                    </div>
+                        <button type="submit" class="btn btn-primary w-100">Entrar</button>
+                    </form>
+                    <p class="mt-3 text-center small">
+                        ¿Nuevo aquí? <a href="#" onclick="switchAuthView('view-register')">Crear cuenta</a>
+                    </p>
                 </div>
             </div>
 
-            <div id="tab-emisores" class="dash-content">
-                <div class="card">
-                    <div class="card-body table-responsive">
-                        <table class="table" id="tableEmisores">
-                            <thead><tr><th>RFC</th><th>Nombre</th><th>Acción</th></tr></thead>
-                            <tbody></tbody>
-                        </table>
+            <div id="view-register" class="card auth-card hidden">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Registro</h3>
+                    <form id="registerForm">
+                        <div class="form-row">
+                            <div class="form-group"><input type="text" id="regName" class="form-control" placeholder="Nombre" required></div>
+                            <div class="form-group"><input type="text" id="regLast" class="form-control" placeholder="Apellidos" required></div>
+                        </div>
+                        <div class="form-group"><input type="tel" id="regPhone" class="form-control" placeholder="WhatsApp (10 dígitos)" required></div>
+                        <div class="form-group"><input type="email" id="regEmail" class="form-control" placeholder="Correo" required></div>
+                        <div class="form-group"><input type="password" id="regPass" class="form-control" placeholder="Contraseña" required></div>
+                        <button type="submit" class="btn btn-success w-100">Registrarse</button>
+                    </form>
+                    <p class="mt-3 text-center small">
+                        <a href="#" onclick="switchAuthView('view-login')">Volver al Login</a>
+                    </p>
+                </div>
+            </div>
+
+            <div id="view-verify" class="card auth-card hidden text-center">
+                <div class="card-body">
+                    <div class="icon-circle bg-warning" style="background: #f59e0b;"><i class="fas fa-lock"></i></div>
+                    <h3>Verificación Requerida</h3>
+                    <p class="small text-muted">Para proteger tus facturas, confirma tu número.</p>
+                    
+                    <div class="instruction-box">
+                        1. Ve al Bot en WhatsApp.<br>
+                        2. Menú <b>Admin > Opción 6</b>.<br>
+                        3. Escribe el código:
                     </div>
+                    
+                    <h1 id="verificationCode" class="otp-display">...</h1>
+                    <div class="spinner mt-3"></div>
+                    
+                    <button class="btn btn-sm btn-link text-danger mt-3" onclick="logout()">Cancelar</button>
                 </div>
             </div>
         </div>
+    </div>
 
+    <div id="app-layout" class="app-layout hidden">
+        
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-bolt"></i> <span>Factura IA</span>
+            </div>
+            
+            <div class="user-info">
+                <div class="avatar"><i class="fas fa-user"></i></div>
+                <div class="details">
+                    <span id="dashUser">Usuario</span>
+                    <small id="dashPhone">Online</small>
+                </div>
+            </div>
+
+            <ul class="nav-links">
+                <li class="section-title">HERRAMIENTAS</li>
+                <li><a href="#" onclick="switchDashView('view-extractor')" class="active"><i class="fas fa-file-import"></i> Agregar Emisor</a></li>
+                
+                <li class="section-title">ADMINISTRACIÓN</li>
+                <li><a href="#" onclick="switchDashView('view-emisores')"><i class="fas fa-building"></i> Mis Emisores</a></li>
+                <li><a href="#" onclick="switchDashView('view-receptores')"><i class="fas fa-users"></i> Mis Receptores</a></li>
+                
+                <li class="section-title">DOCUMENTOS CFDI</li>
+                <li><a href="#" onclick="switchDashView('view-facturas')"><i class="fas fa-file-invoice-dollar"></i> Facturas</a></li>
+                <li><a href="#" onclick="switchDashView('view-notas')"><i class="fas fa-file-invoice"></i> Notas de Crédito</a></li>
+                <li><a href="#" onclick="switchDashView('view-complementos')"><i class="fas fa-receipt"></i> Complementos</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            
+            <div id="view-extractor" class="dash-view active">
+                <header class="mb-4">
+                    <h1 class="page-title-custom"><i class="fas fa-file-pdf"></i> Agregar Emisor</h1>
+                    <p class="text-muted">Carga tu Constancia Fiscal (PDF) para extraer, editar y registrar tu Emisor y CSD.</p>
+                </header>
+
+                <div class="card card-custom">
+                    <div class="card-header-custom">
+                        <i class="fas fa-upload"></i>
+                        <h2>Carga tu PDF</h2>
+                    </div>
+                    <div class="card-body">
+                        <div class="upload-area" id="uploadArea">
+                            <i class="fas fa-file-pdf"></i>
+                            <h3>Selecciona o arrastra tu PDF</h3>
+                            <p>Formato soportado: PDF (.pdf)</p>
+                            <button class="btn btn-primary" id="selectFileBtn">
+                                <i class="fas fa-folder-open"></i> Seleccionar Archivo
+                            </button>
+                        </div>
+                        <input type="file" id="fileInput" accept=".pdf" class="hidden">
+                        <div id="fileName" class="mt-3 text-center" style="color: var(--gray); display:none;"></div>
+                    </div>
+                </div>
+
+                <div class="card card-custom hidden" id="extractedDataCard">
+                    <div class="card-header-custom">
+                        <i class="fas fa-file-alt"></i>
+                        <h2>Información Extraída</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="alerts"></div>
+                        <form id="emisorForm">
+                            <div class="form-group">
+                                <label for="phone_number"><i class="fas fa-phone"></i> Número de Teléfono (WhatsApp) *</label>
+                                <input type="text" id="phone_number" class="form-control" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="rfc"><i class="fas fa-id-card"></i> RFC *</label>
+                                    <input type="text" id="rfc" class="form-control" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="name"><i class="fas fa-building"></i> Nombre/Razón Social *</label>
+                                    <input type="text" id="name" class="form-control" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-balance-scale"></i> Regímenes Fiscales Detectados</label>
+                                <div class="regimenes-list" id="regimenes-list">
+                                    <p class="empty-message" id="no-regimenes-msg">No se detectaron regímenes fiscales</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label><i class="fas fa-chart-line"></i> Actividades Económicas</label>
+                                <div class="activities-list" id="economic-activities">
+                                    <p class="empty-message" id="no-activities-msg">No se detectaron actividades</p>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="zip_code"><i class="fas fa-map-marker-alt"></i> Código Postal *</label>
+                                <input type="text" id="zip_code" class="form-control" required>
+                            </div>
+
+                            <h4 class="mt-4 mb-3 text-muted border-bottom pb-2">Dirección Fiscal</h4>
+                            <div class="address-grid">
+                                <div class="form-group"><label>Calle</label><input type="text" id="street" class="form-control"></div>
+                                <div class="form-group"><label>No. Exterior</label><input type="text" id="exterior_number" class="form-control"></div>
+                                <div class="form-group"><label>No. Interior</label><input type="text" id="interior_number" class="form-control"></div>
+                                <div class="form-group"><label>Colonia</label><input type="text" id="neighborhood" class="form-control"></div>
+                                <div class="form-group"><label>Municipio/Ciudad</label><input type="text" id="city" class="form-control"></div>
+                                <div class="form-group"><label>Estado</label><input type="text" id="state" class="form-control"></div>
+                                <div class="form-group"><label>País</label><input type="text" id="country" class="form-control"></div>
+                            </div>
+
+                            <div class="form-group mt-4">
+                                <button type="submit" class="btn btn-success w-100" id="saveBtn">
+                                    <i class="fas fa-save"></i> Guardar Emisor
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card card-custom">
+                    <div class="card-header-custom" style="background: linear-gradient(135deg, #7209b7 0%, #4361ee 100%);">
+                        <i class="fas fa-shield-alt"></i>
+                        <h2>Subir Certificado de Sello Digital (CSD)</h2>
+                    </div>
+                    <div class="card-body">
+                        <p class="text-muted mb-3">Sube el certificado (.cer) y la llave privada (.key) junto con la contraseña para facturar.</p>
+
+                        <form id="csdForm">
+                            <div class="form-group">
+                                <label for="csd_rfc">RFC Emisor *</label>
+                                <input id="csd_rfc" name="Rfc_Emisor" class="form-control" placeholder="Se llena automático al extraer PDF" required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="csd_password">Contraseña Private Key *</label>
+                                <input id="csd_password" name="PrivateKeyPassword" type="password" class="form-control" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="csd_cert">Certificado (.cer) *</label>
+                                    <input id="csd_cert" name="Certificate" type="file" accept=".cer,.crt" class="form-control" style="padding: 3px;" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="csd_key">Llave privada (.key) *</label>
+                                    <input id="csd_key" name="PrivateKey" type="file" accept=".key,.pem" class="form-control" style="padding: 3px;" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group mt-3">
+                                <button type="submit" class="btn btn-secondary w-100" id="csdUploadBtn">
+                                    <i class="fas fa-cloud-upload-alt"></i> Subir CSD
+                                </button>
+
+                                <div id="csdProgress" class="hidden mt-3">
+                                    <div class="progress-container">
+                                        <div id="csdProgressBar" class="progress-bar"></div>
+                                    </div>
+                                    <small id="csdProgressText" class="text-muted"></small>
+                                </div>
+                            </div>
+                            <div id="csdAlerts" class="mt-3"></div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="view-emisores" class="dash-view hidden">
+                <h2 class="page-title">Catálogo de Emisores</h2>
+                <div class="card"><div class="card-body table-responsive"><table class="table" id="tableEmisores"><thead><tr><th>RFC</th><th>Razón Social</th><th>C.P.</th><th class="text-right">Acciones</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+            <div id="view-receptores" class="dash-view hidden">
+                <h2 class="page-title">Catálogo de Receptores</h2>
+                <div class="card"><div class="card-body table-responsive"><table class="table" id="tableReceptores"><thead><tr><th>RFC</th><th>Razón Social</th><th>Uso CFDI</th><th class="text-right">Acciones</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+            <div id="view-facturas" class="dash-view hidden">
+                <h2 class="page-title">Facturas de Ingreso</h2>
+                <div class="card"><div class="card-body table-responsive"><table class="table" id="tableFacturas"><thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th>Total</th><th>Estado</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+            <div id="view-notas" class="dash-view hidden">
+                <h2 class="page-title">Notas de Crédito</h2>
+                <div class="card"><div class="card-body table-responsive"><table class="table" id="tableNotas"><thead><tr><th>Folio</th><th>Fecha</th><th>Cliente</th><th>Total</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+            <div id="view-complementos" class="dash-view hidden">
+                <h2 class="page-title">Bitácora de Pagos (Complementos)</h2>
+                <div class="card"><div class="card-body table-responsive"><table class="table" id="tableComplementos"><thead><tr><th>Folio CP</th><th>Factura Orig.</th><th>Fecha Pago</th><th>Abono</th><th>Saldo</th></tr></thead><tbody></tbody></table></div></div>
+            </div>
+
+        </main>
     </div>
 
     <script src="script.js"></script>

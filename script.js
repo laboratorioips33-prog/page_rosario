@@ -1,487 +1,678 @@
 // CONFIGURACIÓN
-const API_URL = "https://2660ee008f84.ngrok-free.app/api";
+const API_URL = "https://1a5e1ffe82d8.ngrok-free.app/api";
+const BASE_URL = "https://1a5e1ffe82d8.ngrok-free.app";
 
-// Variables de Estado para Herramientas (Extractor)
-let extractedData = {};
-
-// Variables de Estado para Sesión (Auth Python)
+// Variables de Estado
 let currentUserUid = localStorage.getItem('app_uid');
 let currentUserName = localStorage.getItem('app_name');
+let extractedDataCache = {}; // Cache del PDF
 
-document.addEventListener('DOMContentLoaded', function() {
-    
-    // Al cargar, verificar si hay sesión activa para ajustar la vista "Mi Cuenta"
+// =========================================
+// 0. INICIALIZACIÓN
+// =========================================
+function goToLogin() {
+    document.getElementById('landing-page').classList.add('hidden');      // Oculta Landing
+    document.getElementById('auth-container').classList.remove('hidden'); // Muestra Auth
+    switchAuthView('view-login'); // Asegura que se vea el formulario de login
+}
+
+// Función para ir al Registro desde la Landing
+function goToRegister() {
+    document.getElementById('landing-page').classList.add('hidden');      // Oculta Landing
+    document.getElementById('auth-container').classList.remove('hidden'); // Muestra Auth
+    switchAuthView('view-register'); // Asegura que se vea el formulario de registro
+}
+
+// Función para volver a la Landing desde Login/Registro
+function goToHome() {
+    document.getElementById('auth-container').classList.add('hidden');    // Oculta Auth
+    document.getElementById('landing-page').classList.remove('hidden');   // Muestra Landing
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Verificar si hay usuario guardado
     if (currentUserUid) {
-        checkAuthStatus(); // Verificar token/sesión en el backend
+        checkAuthStatus();
+    } else {
+        // CORRECCIÓN: Si no hay usuario, aseguramos que se vea la Landing
+        // y se oculte el Auth Container.
+        document.getElementById('landing-page').classList.remove('hidden');
+        document.getElementById('auth-container').classList.add('hidden');
     }
 
-    // ==========================================
-    // 1. GESTIÓN DE VISTAS Y NAVEGACIÓN
-    // ==========================================
-    window.switchMainView = function(viewId) {
-        // Botones de navegación superior
-        document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
-        
-        // Activar botón visualmente
-        const btnIndex = viewId === 'view-tools' ? 0 : 1;
-        document.querySelectorAll('.nav-btn')[btnIndex].classList.add('active');
+    // Inicializar listeners...
+    setupExtractorListeners();
+    setupCSDListener();
+});
 
-        // Ocultar todas las vistas principales
-        document.querySelectorAll('.main-view').forEach(view => view.classList.add('hidden'));
-        
-        // Mostrar la seleccionada
-        const targetView = document.getElementById(viewId);
-        if(targetView) targetView.classList.remove('hidden');
+// =========================================
+// 1. MANEJO DE VISTAS (NAVEGACIÓN)
+// =========================================
+
+function switchAuthView(viewId) {
+    ['view-login', 'view-register', 'view-verify'].forEach(id => {
+        document.getElementById(id).classList.add('hidden');
+    });
+    document.getElementById(viewId).classList.remove('hidden');
+}
+
+window.switchDashView = function(viewId) {
+    // 1. Actualizar links activos en el sidebar
+    document.querySelectorAll('.nav-links a').forEach(a => {
+        a.classList.remove('active');
+        if(a.getAttribute('onclick').includes(viewId)) a.classList.add('active');
+    });
+
+    // 2. Mostrar la vista correcta
+    document.querySelectorAll('.dash-view').forEach(v => v.classList.add('hidden'));
+    document.getElementById(viewId).classList.remove('hidden');
+};
+
+// =========================================
+// 2. AUTENTICACIÓN
+// =========================================
+
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+        email: document.getElementById('loginEmail').value,
+        password: document.getElementById('loginPass').value
     };
-
-    // Función para cambiar sub-vistas dentro de "Mi Cuenta" (Login vs Registro vs Dashboard)
-    window.switchAccountView = function(viewId) {
-        const accountViews = ['view-login', 'view-register', 'view-verify', 'view-dashboard'];
-        accountViews.forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.classList.add('hidden');
+    try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
         });
-        const target = document.getElementById(viewId);
-        if(target) target.classList.remove('hidden');
-    };
-
-    // Función para pestañas del Dashboard
-    window.openDashTab = function(tabId) {
-        document.querySelectorAll('.dash-tab').forEach(t => t.classList.remove('active'));
-        document.querySelectorAll('.dash-content').forEach(c => c.classList.remove('active'));
-
-        // Activar botón (buscando por atributo onclick)
-        const buttons = document.querySelectorAll('.dash-tab');
-        buttons.forEach(btn => {
-            if(btn.getAttribute('onclick').includes(tabId)) btn.classList.add('active');
-        });
-
-        document.getElementById(tabId).classList.add('active');
-    };
-
-    // ==========================================
-    // 2. LÓGICA DE HERRAMIENTAS (PDF / CSD)
-    // ==========================================
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
-    const fileNameDisplay = document.getElementById('fileName');
-
-    if(uploadArea && fileInput) {
-        // Drag & Drop events
-        document.getElementById('selectFileBtn').addEventListener('click', () => fileInput.click());
-        uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#4361ee'; });
-        uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#e9ecef'; });
-        uploadArea.addEventListener('drop', (e) => {
-            e.preventDefault();
-            if (e.dataTransfer.files.length) handlePdfFile(e.dataTransfer.files[0]);
-        });
-        fileInput.addEventListener('change', (e) => {
-            if (e.target.files.length) handlePdfFile(e.target.files[0]);
-        });
-    }
-
-    function handlePdfFile(file) {
-        if (file.type !== 'application/pdf') return showAlert('Solo archivos PDF.', 'error');
-        
-        fileNameDisplay.textContent = file.name;
-        showAlert('Procesando PDF...', 'success');
-        
-        const formData = new FormData();
-        formData.append('file', file);
-
-        setLoading('selectFileBtn', true);
-
-        fetch(`${API_URL}/extract-emisor-from-pdf`, { method: 'POST', body: formData })
-            .then(res => res.json())
-            .then(res => {
-                if (res.status === 'success') {
-                    extractedData = res.data;
-                    populateEmisorForm(res.data);
-                    document.getElementById('extractedDataCard').classList.remove('hidden');
-                    // Scroll suave hacia el formulario
-                    document.getElementById('extractedDataCard').scrollIntoView({ behavior: 'smooth' });
-                    showAlert('Datos extraídos correctamente.', 'success');
-                } else {
-                    throw new Error(res.detail || 'Error desconocido');
-                }
-            })
-            .catch(err => showAlert('Error: ' + err.message, 'error'))
-            .finally(() => setLoading('selectFileBtn', false));
-    }
-
-    function populateEmisorForm(data) {
-        document.getElementById('rfc').value = data.rfc || '';
-        document.getElementById('name').value = data.name || '';
-        document.getElementById('zip_code').value = data.zip_code || '';
-        
-        const addr = data.address || {};
-        document.getElementById('street').value = addr.Street || '';
-        document.getElementById('exterior_number').value = addr.ExteriorNumber || '';
-        document.getElementById('interior_number').value = addr.InteriorNumber || '';
-        document.getElementById('neighborhood').value = addr.Neighborhood || '';
-        document.getElementById('city').value = addr.City || addr.Municipality || '';
-        document.getElementById('state').value = addr.State || '';
-        document.getElementById('country').value = addr.Country || 'MX';
-
-        // Llenar listas
-        renderList('regimenes-list', data.regimenes_disponibles, 'balance-scale-right', 'codigo');
-        renderList('economic-activities', data.economic_activities, 'chart-line');
-    }
-
-    function renderList(containerId, items, icon, keyLabel) {
-        const container = document.getElementById(containerId);
-        if(!container) return;
-        container.innerHTML = '';
-        if (!items || !items.length) {
-            container.innerHTML = '<p class="empty-message" style="color:grey; font-style:italic;">Sin datos</p>';
-            return;
+        const data = await res.json();
+        if(data.status === 'success') {
+            handleLoginSuccess(data);
+        } else {
+            alert(data.detail || "Error en credenciales");
         }
+    } catch(e) { alert("Error de conexión"); }
+});
+
+document.getElementById('registerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+        first_name: document.getElementById('regName').value,
+        last_name: document.getElementById('regLast').value,
+        phone: document.getElementById('regPhone').value,
+        email: document.getElementById('regEmail').value,
+        password: document.getElementById('regPass').value
+    };
+    try {
+        const res = await fetch(`${API_URL}/auth/register`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(res.ok) {
+            alert("Registro exitoso. Inicia sesión.");
+            switchAuthView('view-login');
+        } else {
+            alert("Error en registro");
+        }
+    } catch(e) { alert("Error de red"); }
+});
+
+function handleLoginSuccess(data) {
+    currentUserUid = data.uid;
+    currentUserName = data.user_name;
+    localStorage.setItem('auth_token', data.idToken);
+    localStorage.setItem('app_name', data.user_name);
+
+    if(data.is_verified) {
+        showDashboard();
+    } else {
+        startVerification(data.uid);
+    }
+}
+
+function startVerification(uid) {
+    document.getElementById('auth-container').classList.remove('hidden');
+    switchAuthView('view-verify');
+    
+    fetch(`${API_URL}/auth/get-status`, {
+        method: 'POST', headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ uid: uid })
+    })
+    .then(r => r.json())
+    .then(data => {
+        document.getElementById('verificationCode').innerText = data.code;
+        startPolling(uid);
+    });
+}
+
+function startPolling(uid) {
+    const interval = setInterval(async () => {
+        const res = await fetch(`${API_URL}/auth/get-status`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ uid: uid })
+        });
+        const data = await res.json();
+        if(data.status === 'verified') {
+            clearInterval(interval);
+            showDashboard();
+            loadAllData(data.data);
+        }
+    }, 3000);
+}
+
+// =========================================
+// 3. DASHBOARD Y DATOS
+// =========================================
+
+function showDashboard() {
+    document.getElementById('auth-container').classList.add('hidden');
+    document.getElementById('app-layout').classList.remove('hidden');
+    document.getElementById('dashUser').innerText = currentUserName || "Usuario";
+    fetchDashboardData();
+}
+
+function fetchDashboardData() {
+    // Nota: Ya no enviamos { uid: currentUserUid } en el body
+    // El backend sacará el UID del token automáticamente.
+    authFetch(`${API_URL}/dashboard/get-data`, {
+        method: 'POST', 
+        body: JSON.stringify({}) // Body vacío (o con filtros si necesitas)
+    })
+    .then(res => {
+        if(res) return res.json(); // Validamos que res exista
+    })
+    .then(res => {
+        if (res && res.status === 'success') {
+            loadAllData(res.data);
+            if(res.phone) { 
+                document.getElementById('phone_number').value = res.phone.replace('whatsapp:+521', '');
+            }
+        }
+    })
+    .catch(err => console.error("Error fetching dashboard:", err));
+}
+
+
+
+function loadAllData(data) {
+    if(!data) return;
+    renderEmisores(data.emisores);
+    renderReceptores(data.receptores);
+    renderFacturas(data.facturas);
+    renderNotas(data.notas_credito);
+    renderComplementos(data.complementos);
+}
+
+// --- RENDERIZADORES DE TABLAS ---
+function renderEmisores(list) {
+    const tbody = document.querySelector('#tableEmisores tbody');
+    tbody.innerHTML = '';
+    (list || []).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.Rfc}</td><td>${item.Name}</td><td>${item.ExpeditionPlace || ''}</td>
+            <td class="text-right"><button class="btn btn-sm btn-danger" onclick="deleteItem('emisor', '${item.Rfc}')"><i class="fas fa-trash"></i></button></td>`;
+        tbody.appendChild(tr);
+    });
+}
+function renderReceptores(list) {
+    const tbody = document.querySelector('#tableReceptores tbody');
+    tbody.innerHTML = '';
+    (list || []).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `<td>${item.Rfc}</td><td>${item.Name}</td><td>${item.UsoCFDI || 'G03'}</td>
+            <td class="text-right"><button class="btn btn-sm btn-danger" onclick="deleteItem('receptor', '${item.Rfc}')"><i class="fas fa-trash"></i></button></td>`;
+        tbody.appendChild(tr);
+    });
+}
+function renderFacturas(list) {
+    const tbody = document.querySelector('#tableFacturas tbody');
+    tbody.innerHTML = '';
+    (list || []).forEach(item => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td>${item.folio || 'N/A'}</td>
+            <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '-'}</td>
+            <td>${item.receptor}</td>
+            <td>$${parseFloat(item.total).toFixed(2)}</td>
+            <td><span class="badge">${item.estado_pago || 'Pendiente'}</span></td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+
+function renderNotas(list) {
+    const tbody = document.querySelector('#tableNotas tbody');
+    tbody.innerHTML = '';
+    
+    if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay notas de crédito registradas</td></tr>';
+        return;
+    }
+
+    list.forEach(item => {
+        const tr = document.createElement('tr');
+        // Formatear fecha si existe
+        const fecha = item.fecha_emision ? new Date(item.fecha_emision).toLocaleDateString() : '-';
+        const total = parseFloat(item.total).toFixed(2);
+
+        tr.innerHTML = `
+            <td>${item.folio || 'S/N'}</td>
+            <td>${fecha}</td>
+            <td>${item.receptor || ''}</td>
+            <td>$${total}</td>
+            <td>
+                 ${item.pdf_url ? `<a href="${item.pdf_url}" target="_blank" class="btn btn-sm btn-primary"><i class="fas fa-file-pdf"></i></a>` : '-'}
+            </td>`;
+        tbody.appendChild(tr);
+    });
+}
+
+function renderComplementos(list) {
+    const tbody = document.querySelector('#tableComplementos tbody');
+    tbody.innerHTML = '';
+
+    if (!list || list.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="5" class="text-center">No hay complementos de pago registrados</td></tr>';
+        return;
+    }
+
+    list.forEach(item => {
+        const tr = document.createElement('tr');
+        
+        // Formateo seguro de montos
+        const monto = parseFloat(item.monto || 0).toFixed(2);
+        const saldo = parseFloat(item.saldo_insoluto || 0).toFixed(2);
+        
+        // Formateo de fecha
+        let fecha = '-';
+        if (item.fecha_pago) {
+            // Intentar convertir fecha
+            try { fecha = new Date(item.fecha_pago).toLocaleDateString(); } catch(e){}
+        }
+
+     
+        tr.innerHTML = `
+            <td>${item.folio_cp || 'S/N'}</td>
+            <td title="${item.uuid_factura}">${uuidCorto}</td>
+            <td>${fecha}</td>
+            <td class="text-success">$${monto}</td>
+            <td class="text-danger">$${saldo}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// =========================================
+// 4. LÓGICA DEL EXTRACTOR PDF (NUEVO DISEÑO)
+// =========================================
+
+function setupExtractorListeners() {
+    const uploadArea = document.getElementById('uploadArea');
+    const fileInput = document.getElementById('fileInput');
+    const selectFileBtn = document.getElementById('selectFileBtn');
+
+    // Drag & Drop visual effects
+    uploadArea.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#4361ee';
+        uploadArea.style.backgroundColor = 'rgba(67, 97, 238, 0.1)';
+    });
+    uploadArea.addEventListener('dragleave', () => {
+        uploadArea.style.borderColor = '#e2e8f0';
+        uploadArea.style.backgroundColor = '#fafbff';
+    });
+    uploadArea.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadArea.style.borderColor = '#e2e8f0';
+        uploadArea.style.backgroundColor = '#fafbff';
+        if (e.dataTransfer.files[0]) handlePDF(e.dataTransfer.files[0]);
+    });
+
+    selectFileBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files[0]) handlePDF(e.target.files[0]);
+    });
+
+    // Guardar Emisor
+    document.getElementById('emisorForm').addEventListener('submit', saveEmisorData);
+}
+
+function handlePDF(file) {
+    if (file.type !== 'application/pdf') return showAlert('Solo archivos PDF.', 'error');
+    
+    document.getElementById('fileName').innerText = file.name;
+    document.getElementById('fileName').style.display = 'block';
+    
+    extractDataFromPDF(file);
+}
+
+async function extractDataFromPDF(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    showLoading(true, 'selectFileBtn'); // Spinner en botón carga
+
+    try {
+        const response = await fetch(`${API_URL}/extract-emisor-from-pdf`, {
+            method: "POST",
+            body: formData
+        });
+
+        if (!response.ok) throw new Error('Error en la extracción');
+        const result = await response.json();
+
+        if (result.status === 'success') {
+            extractedDataCache = result.data;
+            populateForm(extractedDataCache);
+            document.getElementById('extractedDataCard').classList.remove('hidden');
+            // Scroll suave hacia el formulario
+            document.getElementById('extractedDataCard').scrollIntoView({ behavior: 'smooth' });
+            showAlert('Datos extraídos correctamente.', 'success');
+        } else {
+            throw new Error(result.message || 'Error desconocido');
+        }
+    } catch (error) {
+        showAlert('Error al procesar PDF: ' + error.message, 'error');
+    } finally {
+        showLoading(false, 'selectFileBtn');
+    }
+}
+
+function populateForm(data) {
+    // Básicos
+    document.getElementById('rfc').value = data.rfc || '';
+    document.getElementById('csd_rfc').value = data.rfc || ''; // Auto-llenar en CSD
+    document.getElementById('name').value = data.name || '';
+    document.getElementById('zip_code').value = data.zip_code || '';
+
+    // Dirección (Validar existencia)
+    const addr = data.address || {};
+    document.getElementById('street').value = addr.Street || '';
+    document.getElementById('exterior_number').value = addr.ExteriorNumber || '';
+    document.getElementById('interior_number').value = addr.InteriorNumber || '';
+    document.getElementById('neighborhood').value = addr.Neighborhood || '';
+    document.getElementById('city').value = addr.City || addr.Municipality || ''; 
+    document.getElementById('state').value = addr.State || '';
+    document.getElementById('country').value = addr.Country || 'MX';
+
+    // Listas (Regímenes y Actividades)
+    displayList('regimenes-list', data.regimenes_disponibles, 'no-regimenes-msg', 'balance-scale-right');
+    displayList('economic-activities', data.economic_activities, 'no-activities-msg', 'chart-line');
+}
+
+function displayList(containerId, items, emptyMsgId, icon) {
+    const container = document.getElementById(containerId);
+    const emptyMsg = document.getElementById(emptyMsgId);
+    
+    // Limpiar (manteniendo el mensaje vacío oculto)
+    Array.from(container.children).forEach(c => { if(c.id !== emptyMsgId) c.remove(); });
+    
+    if (items && items.length > 0) {
+        emptyMsg.style.display = 'none';
         items.forEach(item => {
             const div = document.createElement('div');
-            div.className = typeof item === 'object' ? 'regimen-item' : 'activity-item';
+            // Clase correcta dependiendo de la lista
+            div.className = containerId === 'regimenes-list' ? 'regimen-item' : 'activity-item';
             
-            let text = item;
-            if (typeof item === 'object' && item[keyLabel]) {
-                text = `<strong>${item[keyLabel]}</strong> - ${item.descripcion || ''}`;
+            // Texto limpio
+            let text = '';
+            if (typeof item === 'object' && item !== null) {
+                text = item.codigo ? `<strong>${item.codigo}</strong> - ${item.descripcion}` : (item.descripcion || JSON.stringify(item));
+            } else {
+                text = String(item).replace(/{|}|'/g, '').trim();
             }
-            text = String(text).replace(/[{ } ']/g, ' ').trim();
+
             div.innerHTML = `<i class="fas fa-${icon}"></i> <span>${text}</span>`;
             container.appendChild(div);
         });
+    } else {
+        emptyMsg.style.display = 'block';
     }
+}
 
-    // Guardar Emisor (Botón en Herramientas)
-    const emisorForm = document.getElementById('emisorForm');
-    if(emisorForm) {
-        emisorForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const payload = {
-                phone_number: document.getElementById('phone_number').value,
-                rfc: document.getElementById('rfc').value,
-                name: document.getElementById('name').value,
-                fiscal_regimes: (extractedData.regimenes_disponibles || []).map(r => r.codigo || r),
-                economic_activities: extractedData.economic_activities || [],
-                zip_code: document.getElementById('zip_code').value,
-                address: {
-                    Street: document.getElementById('street').value,
-                    ExteriorNumber: document.getElementById('exterior_number').value,
-                    InteriorNumber: document.getElementById('interior_number').value,
-                    Neighborhood: document.getElementById('neighborhood').value,
-                    Municipality: document.getElementById('city').value,
-                    State: document.getElementById('state').value,
-                    Country: document.getElementById('country').value,
-                    ZipCode: document.getElementById('zip_code').value
-                }
-            };
+// Guardar Emisor
+async function saveEmisorData(e) {
+    e.preventDefault();
+    
+    // Construir Payload
+    const fiscalRegimes = extractedDataCache.regimenes_disponibles || [];
+    const payload = {
+        phone_number: document.getElementById('phone_number').value,
+        rfc: document.getElementById('rfc').value,
+        name: document.getElementById('name').value,
+        zip_code: document.getElementById('zip_code').value,
+        fiscal_regimes: fiscalRegimes.map(r => (typeof r === 'object' && r.codigo) ? r.codigo : r),
+        economic_activities: extractedDataCache.economic_activities || [],
+        address: {
+            Street: document.getElementById('street').value,
+            ExteriorNumber: document.getElementById('exterior_number').value,
+            InteriorNumber: document.getElementById('interior_number').value,
+            Neighborhood: document.getElementById('neighborhood').value,
+            Municipality: document.getElementById('city').value,
+            State: document.getElementById('state').value,
+            Country: document.getElementById('country').value,
+            ZipCode: document.getElementById('zip_code').value
+        }
+    };
 
-            if(!payload.phone_number) return showAlert("Ingresa un número de teléfono.", "error");
-
-            setLoading('saveBtn', true);
-            fetch(`${API_URL}/save-emisor`, {
-                method: 'POST',
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify(payload)
-            })
-            .then(res => res.json())
-            .then(res => {
-                if(res.status === 'success') {
-                    showAlert('¡Guardado exitosamente!', 'success');
-                } else {
-                    throw new Error(res.detail || 'Error al guardar');
-                }
-            })
-            .catch(err => showAlert(err.message, 'error'))
-            .finally(() => setLoading('saveBtn', false));
+    showLoading(true, 'saveBtn');
+    
+    try {
+        const response = await fetch(`${API_URL}/save-emisor`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
         });
+        const result = await response.json();
+        
+        if (response.ok) {
+            showAlert(result.message || "Emisor guardado correctamente", "success");
+            fetchDashboardData(); // Actualizar tabla
+        } else {
+            throw new Error(result.detail || "Error al guardar");
+        }
+    } catch (err) {
+        showAlert(err.message, "error");
+    } finally {
+        showLoading(false, 'saveBtn');
     }
+}
 
-    // Subida CSD
+// =========================================
+// 5. SUBIDA DE CSD (XHR PARA PROGRESO)
+// =========================================
+
+function setupCSDListener() {
     const csdForm = document.getElementById('csdForm');
-    if (csdForm) {
-        csdForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            const form = new FormData(this);
-            const btn = document.getElementById('csdUploadBtn');
-            const pBar = document.getElementById('csdProgressBar');
-            const pTrack = document.getElementById('csdProgress');
-            
-            btn.disabled = true; 
-            btn.innerHTML = '<span class="spinner" style="width:15px;height:15px;"></span> Subiendo...';
-            if(pTrack) pTrack.classList.remove('hidden');
-            if(pBar) pBar.style.width = '50%';
+    if(!csdForm) return;
 
-            fetch(`${API_URL}/csd_upload`, { method: 'POST', body: form })
-            .then(res => res.json())
-            .then(res => {
-                if(pBar) pBar.style.width = '100%';
-                if(res.status === 'success' || res.message) {
-                    showAlert(res.message || 'CSD Subido', 'success');
-                    this.reset();
-                } else {
-                    throw new Error(res.message || res.detail);
-                }
-            })
-            .catch(err => showAlert(err.message, 'error'))
-            .finally(() => {
-                btn.disabled = false; 
-                btn.innerHTML = '<i class="fas fa-cloud-upload-alt"></i> Subir Archivos CSD';
-                setTimeout(() => { if(pTrack) pTrack.classList.add('hidden'); if(pBar) pBar.style.width = '0'; }, 3000);
-            });
-        });
-    }
-
-    // ==========================================
-    // 3. LÓGICA DE AUTENTICACIÓN (PYTHON BACKEND)
-    // ==========================================
-
-    // --- A. Registro ---
-    const regForm = document.getElementById('registerForm');
-    if(regForm) {
-        regForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                first_name: document.getElementById('regName').value,
-                last_name: document.getElementById('regLast').value,
-                phone: document.getElementById('regPhone').value,
-                email: document.getElementById('regEmail').value,
-                password: document.getElementById('regPass').value
-            };
-
-            try {
-                const res = await fetch(`${API_URL}/auth/register`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-                
-                if(data.status === 'success') {
-                    alert("Registro exitoso. Por favor, inicia sesión.");
-                    switchAccountView('view-login');
-                } else {
-                    alert("Error: " + (data.detail || "Desconocido"));
-                }
-            } catch(err) { alert("Error de conexión al registrar."); }
-        });
-    }
-
-    // --- B. Login ---
-    const loginForm = document.getElementById('loginForm');
-    if(loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const payload = {
-                email: document.getElementById('loginEmail').value,
-                password: document.getElementById('loginPass').value
-            };
-
-            try {
-                const res = await fetch(`${API_URL}/auth/login`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify(payload)
-                });
-                const data = await res.json();
-
-                if(data.status === 'success') {
-                    // Guardar sesión localmente
-                    currentUserUid = data.uid;
-                    currentUserName = data.user_name;
-                    localStorage.setItem('app_uid', data.uid);
-                    localStorage.setItem('app_name', data.user_name);
-                    
-                    if(data.is_verified) {
-                        // Si ya tiene whats verificado, ir al dashboard
-                        showDashboard();
-                    } else {
-                        // Si no, ir a verificación
-                        startVerificationProcess(data.uid);
-                    }
-                } else {
-                    alert("Credenciales incorrectas: " + data.detail);
-                }
-            } catch(err) { alert("Error de conexión al login."); }
-        });
-    }
-
-    // --- C. Verificar Estado (Auto-check al cargar) ---
-    async function checkAuthStatus() {
-        if (!currentUserUid) return;
-        try {
-            const res = await fetch(`${API_URL}/auth/get-status`, {
-                method: 'POST', headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({ uid: currentUserUid })
-            });
-            
-            if(res.status === 404) {
-                // Sesión inválida
-                logout();
-                return;
-            }
-
-            const data = await res.json();
-            if (data.status === 'verified') {
-                // Ya logueado y verificado -> Mostrar Dashboard directo
-                // Forzamos que la vista de cuenta muestre el dashboard
-                const dashView = document.getElementById('view-dashboard');
-                if(dashView) dashView.classList.remove('hidden');
-                document.getElementById('view-login').classList.add('hidden');
-                
-                // Cargar datos
-                loadDashboardData(data.data);
-            } else {
-                // Logueado pero falta verificar -> Mostrar pantalla verificación
-                const verifyView = document.getElementById('view-verify');
-                if(verifyView) verifyView.classList.remove('hidden');
-                document.getElementById('view-login').classList.add('hidden');
-                
-                // Preparamos pantalla
-                setupVerificationUI(data.code, data.claimed_phone);
-            }
-        } catch(e) { console.error("Error checking auth status", e); }
-    }
-
-    // --- D. Proceso de Verificación ---
-    function startVerificationProcess(uid) {
-        // Pedimos estado para obtener el código
-        fetch(`${API_URL}/auth/get-status`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ uid: uid })
-        })
-        .then(res => res.json())
-        .then(data => {
-            switchAccountView('view-verify');
-            setupVerificationUI(data.code, data.claimed_phone);
-        });
-    }
-
-    let pollInterval;
-    function setupVerificationUI(code, phone) {
-        document.getElementById('verifyName').innerText = currentUserName || "Usuario";
-        document.getElementById('verifyPhone').innerText = phone || "...";
-        document.getElementById('verificationCode').innerText = code || "Cargando...";
-
-        // Iniciar Polling (preguntar cada 3s si ya se vinculó)
-        if (pollInterval) clearInterval(pollInterval);
+    csdForm.addEventListener('submit', function(e) {
+        e.preventDefault();
         
-        pollInterval = setInterval(async () => {
-            try {
-                const res = await fetch(`${API_URL}/auth/get-status`, {
-                    method: 'POST', headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ uid: currentUserUid })
-                });
-                const data = await res.json();
-                
-                if (data.status === 'verified') {
-                    clearInterval(pollInterval);
-                    showDashboard();
-                    loadDashboardData(data.data); // Cargar datos que vinieron en la respuesta
-                }
-            } catch(e) { console.error("Polling error", e); }
-        }, 3000);
-    }
+        const rfc = document.getElementById('csd_rfc').value.trim();
+        const pwd = document.getElementById('csd_password').value;
+        const certFile = document.getElementById('csd_cert').files[0];
+        const keyFile = document.getElementById('csd_key').files[0];
 
-    // --- E. Mostrar Dashboard ---
-    window.showDashboard = function() {
-        switchAccountView('view-dashboard');
-        document.getElementById('dashUser').innerText = currentUserName;
-        // Si no tenemos datos cargados aún, los pedimos
-        fetchDashboardData();
-    };
+        if (!rfc || !pwd || !certFile || !keyFile) return showAlert('Faltan campos CSD', 'error');
 
-    function fetchDashboardData() {
-        fetch(`${API_URL}/dashboard/get-data`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ uid: currentUserUid })
-        })
-        .then(res => res.json())
-        .then(res => {
-            if(res.status === 'success') {
-                loadDashboardData(res.data);
+        const formData = new FormData();
+        formData.append('Rfc_Emisor', rfc);
+        formData.append('PrivateKeyPassword', pwd);
+        formData.append('Certificate', certFile);
+        formData.append('PrivateKey', keyFile);
+
+        // UI Updates
+        const btn = document.getElementById('csdUploadBtn');
+        const progressDiv = document.getElementById('csdProgress');
+        const progressBar = document.getElementById('csdProgressBar');
+        const progressText = document.getElementById('csdProgressText');
+        const alertsDiv = document.getElementById('csdAlerts');
+
+        btn.disabled = true;
+        btn.classList.add('btn-loading');
+        progressDiv.classList.remove('hidden');
+        progressBar.style.width = '0%';
+        progressText.innerText = '0%';
+        alertsDiv.innerHTML = '';
+
+        // XHR Upload
+        const xhr = new XMLHttpRequest();
+        // NOTA: Asegúrate que la URL sea correcta. Usualmente es /csd_upload o /api/csd_upload
+        xhr.open('POST', `${BASE_URL}/csd_upload`, true);
+
+        xhr.upload.onprogress = function(ev) {
+            if (ev.lengthComputable) {
+                const pct = Math.round((ev.loaded / ev.total) * 100);
+                progressBar.style.width = pct + '%';
+                progressText.innerText = pct + '%';
             }
-        });
-    }
+        };
 
-    function loadDashboardData(data) {
-        if(!data) return;
-        renderTable('tableFacturas', data.facturas, ['folio', 'receptor', 'total', 'estado_pago', 'pdf']);
-        renderTable('tableEmisores', data.emisores, ['Rfc', 'Name', 'delete']);
-    }
-
-    // Render de tablas del Dashboard
-    function renderTable(tableId, data, columns) {
-        const tbody = document.querySelector(`#${tableId} tbody`);
-        if(!tbody) return;
-        tbody.innerHTML = '';
-        
-        if(!data || !data.length) {
-            tbody.innerHTML = `<tr><td colspan="${columns.length}" class="text-center" style="color:grey; padding:15px;">No hay registros</td></tr>`;
-            return;
-        }
-
-        data.forEach(row => {
-            const tr = document.createElement('tr');
-            columns.forEach(col => {
-                const td = document.createElement('td');
-                if(col === 'total') {
-                    td.textContent = `$${parseFloat(row.total || 0).toFixed(2)}`;
-                } else if(col === 'pdf') {
-                    td.innerHTML = row.pdf_url ? `<a href="${row.pdf_url}" target="_blank" class="btn btn-sm">PDF</a>` : '-';
-                } else if(col === 'delete') {
-                    td.innerHTML = `<button class="btn btn-sm btn-danger" onclick="deleteItem('emisor', '${row.Rfc}')"><i class="fas fa-trash"></i></button>`;
-                } else {
-                    td.textContent = row[col] || row[col.toLowerCase()] || 'N/A';
-                }
-                tr.appendChild(td);
-            });
-            tbody.appendChild(tr);
-        });
-    }
-
-    window.logout = function() {
-        localStorage.clear();
-        location.reload();
-    };
-
-    window.deleteItem = function(type, id) {
-        if(!confirm('¿Eliminar?')) return;
-        fetch(`${API_URL}/delete-emisor`, {
-            method: 'POST', headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ phone_number: "AUTO_DETECTED_IN_BACKEND", rfc: id }) 
-            // Nota: Tu backend necesitará ajustar delete-emisor para aceptar UID o el usuario deberá mandar su teléfono guardado
-            // Como estamos en "Backend-First", lo ideal es crear un endpoint /api/dashboard/delete que reciba {uid, rfc}
-        }).then(() => {
-            alert("Eliminado");
-            fetchDashboardData();
-        });
-    }
-
-    // ==========================================
-    // UTILS UI
-    // ==========================================
-    function showAlert(msg, type) {
-        const div = document.createElement('div');
-        div.className = `alert alert-${type}`;
-        div.textContent = msg;
-        const container = document.getElementById('alerts'); // Contenedor en form extractor
-        if(container) {
-            container.innerHTML = '';
-            container.appendChild(div);
-            setTimeout(() => div.remove(), 4000);
-        } else {
-            alert(msg);
-        }
-    }
-
-    function setLoading(btnId, isLoading) {
-        const btn = document.getElementById(btnId);
-        if(!btn) return;
-        if(isLoading) {
-            btn.dataset.originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="spinner" style="width:15px;height:15px;"></span> Procesando...';
-            btn.disabled = true;
-        } else {
-            btn.innerHTML = btn.dataset.originalText || 'Enviar';
+        xhr.onload = function() {
             btn.disabled = false;
-        }
+            btn.classList.remove('btn-loading');
+
+            let resp = null;
+            try { resp = JSON.parse(xhr.responseText); } catch(e){}
+
+            if (xhr.status >= 200 && xhr.status < 300) {
+                alertsDiv.innerHTML = `<div class="alert alert-success">${resp?.message || 'CSD Subido Correctamente'}</div>`;
+                csdForm.reset();
+            } else {
+                const msg = resp?.detail || resp?.message || 'Error al subir CSD';
+                alertsDiv.innerHTML = `<div class="alert alert-error">${msg}</div>`;
+            }
+        };
+
+        xhr.onerror = function() {
+            btn.disabled = false;
+            btn.classList.remove('btn-loading');
+            alertsDiv.innerHTML = `<div class="alert alert-error">Error de red</div>`;
+        };
+
+        xhr.send(formData);
+    });
+}
+
+// =========================================
+// UTILIDADES GENERALES
+// =========================================
+
+function showAlert(msg, type) {
+    const div = document.getElementById('alerts');
+    div.innerHTML = `<div class="alert alert-${type}">${msg}</div>`;
+    setTimeout(() => div.innerHTML = "", 5000);
+}
+
+function showLoading(isLoading, btnId) {
+    const btn = document.getElementById(btnId);
+    if(!btn) return;
+    
+    if(isLoading) {
+        btn.dataset.originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="loading"></span> Procesando...';
+        btn.classList.add('btn-loading');
+        btn.disabled = true;
+    } else {
+        btn.innerHTML = btn.dataset.originalText || 'Aceptar';
+        btn.classList.remove('btn-loading');
+        btn.disabled = false;
     }
-});
+}
+
+window.deleteItem = function(type, rfc) {
+    if(!confirm('¿Eliminar registro?')) return;
+    const endpoint = type === 'receptor' ? '/delete-receptor' : '/delete-emisor';
+
+    authFetch(`${API_URL}${endpoint}`, {
+        method: 'POST', 
+        body: JSON.stringify({ rfc: rfc }) 
+    }).then(() => fetchDashboardData());
+};
+
+window.logout = function() {
+    localStorage.clear();
+    location.reload();
+};
+
+function checkAuthStatus() {
+    // Usamos authFetch en lugar de fetch normal.
+    // Si el token está vencido, authFetch hará logout automáticamente.
+    authFetch(`${API_URL}/dashboard/get-data`, { // Usamos el endpoint seguro para probar el token
+        method: 'POST', 
+        body: JSON.stringify({}) 
+    })
+    .then(res => {
+        if (!res) return; // Si authFetch falló (401), ya hizo logout
+        return res.json();
+    })
+    .then(data => {
+        if (data && data.status === 'success') {
+            // El token es válido y tenemos datos
+            showDashboard();
+            loadAllData(data.data);
+            if(data.phone) {
+                document.getElementById('phone_number').value = data.phone.replace('whatsapp:+521', '');
+            }
+        }
+    })
+    .catch(() => {
+        // Si hay error de red o cualquier otro, sacamos al usuario
+        logout();
+    });
+}
+
+// =========================================
+// FUNCIÓN HELPER PARA PETICIONES SEGURAS
+// =========================================
+async function authFetch(url, options = {}) {
+    const token = localStorage.getItem('auth_token');
+    
+    if (!token) {
+        console.error("No hay token, redirigiendo a login...");
+        logout();
+        return;
+    }
+
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+        'Authorization': `Bearer ${token}` // <--- AQUÍ ESTÁ LA MAGIA
+    };
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401 || response.status === 403) {
+        alert("Tu sesión ha expirado.");
+        logout();
+        return null; // Detiene la ejecución
+    }
+
+    return response;
+}
+
+async function authFetch(url, options = {}) {
+    const token = localStorage.getItem('auth_token');
+    
+    if (!token) {
+        console.warn("No hay token, cerrando sesión local.");
+        logout();
+        return null;
+    }
+
+    const headers = {
+        'Content-Type': 'application/json',
+        ...options.headers,
+        'Authorization': `Bearer ${token}` 
+    };
+
+    const response = await fetch(url, { ...options, headers });
+
+    if (response.status === 401 || response.status === 403) {
+        console.error("Token rechazado por el servidor (401/403)");
+        alert("Tu sesión ha expirado o las credenciales no son válidas.");
+        logout(); // Esto recarga la página
+        return null; 
+    }
+
+    return response;
+}
