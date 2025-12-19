@@ -1,6 +1,5 @@
 // CONFIGURACIÓN
-const API_URL = "https://yo-te-facturo-717890543339.us-central1.run.app/api"; // Tu API
-// const API_URL = "http://localhost:8000/api"; // Para pruebas locales
+const API_URL = "https://2660ee008f84.ngrok-free.app//api";
 
 document.addEventListener('DOMContentLoaded', function() {
     
