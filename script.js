@@ -1,6 +1,6 @@
 // CONFIGURACIÓN
-const API_URL = " https://1ee26dfae33a.ngrok-free.app/api";
-const BASE_URL = " https://1ee26dfae33a.ngrok-free.app";
+const API_URL = "https://1ee26dfae33a.ngrok-free.app/api";
+const BASE_URL = "https://1ee26dfae33a.ngrok-free.app";
 
 // Variables de Estado
 let currentUserUid = localStorage.getItem('app_uid');
