@@ -245,15 +245,60 @@ body {
 }
 .details { display: flex; flex-direction: column; font-size: 0.9rem; }
 .details small { color: #94a3b8; }
-.nav-links { list-style: none; padding: 0; margin: 20px 0; flex-grow: 1; }
-.section-title { padding: 10px 20px 5px; font-size: 0.75rem; font-weight: 700; color: #64748b; letter-spacing: 1px; }
+
+
+/* ================= SIDEBAR MEJORADO ================= */
+
+/* 1. Contenedor de la lista */
+.nav-links {
+    list-style: none;
+    padding: 0;
+    margin: 20px 0;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column; /* Asegura orden vertical */
+}
+
+/* 2. Títulos de Sección (HERRAMIENTAS, ETC.) */
+.section-title {
+    /* MAGIA AQUÍ: */
+    margin-top: 25px;    /* Empuja hacia abajo para separarse del grupo ANTERIOR */
+    margin-bottom: 5px;  /* Espacio MÍNIMO debajo para pegarse a sus botones */
+    
+    padding: 0 20px;     /* Quitamos padding vertical innecesario */
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #64748b;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+/* El primer título no necesita separarse de nada arriba */
+.nav-links li:first-child.section-title {
+    margin-top: 0;
+}
+
+/* 3. Enlaces (Los botones) */
 .nav-links a {
-    display: block; padding: 12px 20px; color: #cbd5e1;
-    text-decoration: none; transition: 0.3s; display: flex; align-items: center; gap: 10px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 20px;   /* Reduje un poco el padding vertical para que se vean más compactos */
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    border-left: 4px solid transparent;
 }
+
+/* Efecto Hover y Activo */
 .nav-links a:hover, .nav-links a.active {
-    background: rgba(255,255,255,0.1); color: white; border-left: 4px solid var(--primary);
+    background: rgba(255,255,255,0.05);
+    color: white;
+    border-left-color: var(--primary);
 }
+
+
+
 .sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
 .sidebar-footer button {
     background: none; border: none; color: #ef4444;

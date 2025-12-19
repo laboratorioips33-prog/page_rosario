@@ -285,14 +285,16 @@ function renderComplementos(list) {
         // Formateo de fecha
         let fecha = '-';
         if (item.fecha_pago) {
-            // Intentar convertir fecha
             try { fecha = new Date(item.fecha_pago).toLocaleDateString(); } catch(e){}
         }
 
-     
+        const uuidRaw = item.uuid_factura || '';
+        const uuidCorto = uuidRaw.length > 16 ? uuidRaw.substring(0, 16)  : uuidRaw;
+        // -----------------------
+
         tr.innerHTML = `
             <td>${item.folio_cp || 'S/N'}</td>
-            <td title="${item.uuid_factura}">${uuidCorto}</td>
+            <td title="${item.uuid_factura}">${uuidRaw}</td>
             <td>${fecha}</td>
             <td class="text-success">$${monto}</td>
             <td class="text-danger">$${saldo}</td>
