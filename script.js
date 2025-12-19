@@ -1,6 +1,6 @@
 // CONFIGURACIÓN
-const API_URL = "https://78ae59ba4d09.ngrok-free.app/api";
-const BASE_URL = "https://78ae59ba4d09.ngrok-free.app";
+const API_URL = " https://1ee26dfae33a.ngrok-free.app/api";
+const BASE_URL = " https://1ee26dfae33a.ngrok-free.app";
 
 // Variables de Estado
 let currentUserUid = localStorage.getItem('app_uid');
@@ -592,8 +592,26 @@ window.deleteItem = function(type, rfc) {
 };
 
 window.logout = function() {
-    localStorage.clear();
-    location.reload();
+    if(!confirm("¿Estás seguro de que deseas cerrar sesión?")) return;
+
+    localStorage.removeItem('auth_token');
+    localStorage.removeItem('app_uid');
+    localStorage.removeItem('app_name');
+    
+    currentUserUid = null;
+    currentUserName = null;
+    extractedDataCache = {};
+
+    document.getElementById('app-layout').classList.add('hidden');    
+    document.getElementById('auth-container').classList.add('hidden');
+    document.getElementById('landing-page').classList.remove('hidden'); 
+
+    document.getElementById('loginForm').reset();
+    document.getElementById('emisorForm').reset();
+    
+    setTimeout(() => {
+        alert("Has cerrado sesión exitosamente.");
+    }, 100);
 };
 
 function checkAuthStatus() {
