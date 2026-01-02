@@ -217,11 +217,12 @@ function renderReceptores(list) {
     tbody.innerHTML = '';
     (list || []).forEach(item => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${item.Rfc}</td><td>${item.Name}</td><td>${item.UsoCFDI || 'G03'}</td>
+        tr.innerHTML = `<td>${item.Rfc}</td><td>${item.Name}</td><td>${item.Email || 'Sin Correo'}</td>
             <td class="text-right"><button class="btn btn-sm btn-danger" onclick="deleteItem('receptor', '${item.Rfc}')"><i class="fas fa-trash"></i></button></td>`;
         tbody.appendChild(tr);
     });
 }
+
 function renderFacturas(list) {
     const tbody = document.querySelector('#tableFacturas tbody');
     tbody.innerHTML = '';
@@ -230,6 +231,7 @@ function renderFacturas(list) {
         tr.innerHTML = `
             <td>${item.folio || 'N/A'}</td>
             <td>${item.timestamp ? new Date(item.timestamp).toLocaleDateString() : '-'}</td>
+            <td>${item.emisor}</td>
             <td>${item.receptor}</td>
             <td>$${parseFloat(item.total).toFixed(2)}</td>
             <td><span class="badge">${item.estado_pago || 'Pendiente'}</span></td>
