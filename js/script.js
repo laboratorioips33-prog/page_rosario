@@ -32,6 +32,95 @@
     reveals.forEach(el=>observer.observe(el));
   }else reveals.forEach(el=>el.classList.add('in'));
 
+  // Persistent invoice counter: up to 15 randomly timed additions per day.
+  const invoiceCounter=root.querySelector('[data-invoice-counter]');
+  if(invoiceCounter){
+    const dailyLimit=15;
+    const initialTotal=1051;
+    const counterStorageKey='factura-ia-invoice-counter';
+    const countEl=invoiceCounter.querySelector('[data-invoice-count]');
+    let counterTimer;
+    let memoryState;
+
+    function dateKey(date){
+      const year=date.getFullYear();
+      const month=String(date.getMonth()+1).padStart(2,'0');
+      const day=String(date.getDate()).padStart(2,'0');
+      return year+'-'+month+'-'+day;
+    }
+
+    function dailySchedule(now,startAt){
+      const dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate(),8).getTime();
+      const dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),20).getTime();
+      const start=Math.min(dayEnd,Math.max(dayStart,startAt||dayStart));
+      const duration=Math.max(1,dayEnd-start);
+      return Array.from({length:dailyLimit},()=>start+Math.floor(Math.random()*duration)).sort((a,b)=>a-b);
+    }
+
+    function loadState(now){
+      if(memoryState) return memoryState;
+      try{
+        const saved=window.localStorage.getItem(counterStorageKey);
+        if(saved) memoryState=JSON.parse(saved);
+      }catch(error){}
+      if(!memoryState||typeof memoryState.total!=='number'||!Array.isArray(memoryState.schedule)){
+        memoryState={
+          date:dateKey(now),
+          total:initialTotal,
+          completed:0,
+          schedule:dailySchedule(now,now.getTime())
+        };
+      }
+      return memoryState;
+    }
+
+    function saveState(){
+      try{window.localStorage.setItem(counterStorageKey,JSON.stringify(memoryState))}catch(error){}
+    }
+
+    function daysBetween(from,to){
+      const start=new Date(from+'T00:00:00');
+      const end=new Date(to+'T00:00:00');
+      return Math.max(0,Math.round((end-start)/86400000));
+    }
+
+    function renderInvoiceCounter(){
+      const now=new Date();
+      const state=loadState(now);
+      const today=dateKey(now);
+      const elapsedDays=daysBetween(state.date,today);
+
+      if(elapsedDays){
+        state.total+=dailyLimit-Math.min(dailyLimit,state.completed||0);
+        state.total+=Math.max(0,elapsedDays-1)*dailyLimit;
+        state.date=today;
+        state.completed=0;
+        state.schedule=dailySchedule(now);
+      }
+
+      const nowTime=now.getTime();
+      const completed=Math.min(dailyLimit,state.schedule.filter(time=>time<=nowTime).length);
+      const newInvoices=Math.max(0,completed-(state.completed||0));
+      state.total+=newInvoices;
+      state.completed=completed;
+      const nextUpdate=state.schedule.find(time=>time>nowTime);
+
+      countEl.textContent=String(state.total);
+      const counterLabel=state.total+' facturas realizadas';
+      invoiceCounter.dataset.invoiceLabel=counterLabel;
+      invoiceCounter.setAttribute('aria-label',counterLabel);
+      saveState();
+
+      window.clearTimeout(counterTimer);
+      const tomorrow=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
+      const nextTime=nextUpdate||tomorrow;
+      counterTimer=window.setTimeout(renderInvoiceCounter,Math.max(1000,nextTime-nowTime+100));
+    }
+
+    renderInvoiceCounter();
+    document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderInvoiceCounter()});
+  }
+
   // Mobile menu.
   const menuBtn=root.querySelector('.menu-toggle');
   const menu=root.querySelector('.mobile-menu');

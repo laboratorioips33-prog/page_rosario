@@ -258,6 +258,178 @@
       .fia-lp .advisory-details[open] .advisory-field,.fia-lp .advisory-details[open] .advisory-submit{animation:none}
     }
   </style>
+
+  <style id="fia-conversion-overrides">
+    /* Demo real: jerarquía clara y números perfectamente centrados */
+    .fia-lp .modal-card{max-width:960px}
+    .fia-lp .modal .modal-lead{max-width:760px;margin-left:auto;margin-right:auto;text-align:center}
+    .fia-lp .modal .modal-flow{
+      display:grid;
+      grid-template-columns:repeat(4,minmax(0,1fr));
+      gap:14px;
+      margin-top:26px;
+    }
+    .fia-lp .modal .modal-step{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:flex-start;
+      gap:13px;
+      min-width:0;
+      padding:22px 16px;
+      border:1px solid rgba(6,55,108,.13);
+      border-radius:18px;
+      background:#fff;
+      text-align:center;
+      box-shadow:0 18px 38px -34px rgba(6,55,108,.55);
+    }
+    .fia-lp .modal .modal-step-num{
+      display:grid;
+      place-items:center;
+      flex:0 0 48px;
+      width:48px;
+      height:48px;
+      margin:0 auto;
+      border-radius:50%;
+      background:#06376c;
+      color:#4fd1a1;
+      font-family:var(--mono,'JetBrains Mono',monospace);
+      font-size:.82rem;
+      font-weight:800;
+      line-height:1;
+      letter-spacing:.04em;
+      box-shadow:0 0 0 7px rgba(79,209,161,.14);
+    }
+    .fia-lp .modal .modal-step > div{display:flex;flex-direction:column;gap:7px;align-items:center}
+    .fia-lp .modal .modal-step b{color:#06376c;font-size:1rem;line-height:1.2}
+    .fia-lp .modal .modal-step span:not(.modal-step-num){color:#5e6f7a;font-size:.88rem;line-height:1.48}
+    .fia-lp .modal .modal-actions{justify-content:center;margin-top:24px}
+
+    /* Precios: precio de referencia, descuento y tarifa protegida */
+    .fia-lp .pricing-promo{
+      display:grid;
+      grid-template-columns:auto 1fr;
+      gap:4px 18px;
+      align-items:center;
+      margin-top:30px;
+      padding:18px 22px;
+      border:1px solid rgba(79,209,161,.55);
+      border-radius:18px;
+      background:rgba(4,40,79,.55);
+      box-shadow:0 22px 50px -38px rgba(0,0,0,.9);
+    }
+    .fia-lp .pricing-promo .promo-kicker{
+      grid-row:1/3;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:34px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:#4fd1a1;
+      color:#04284f;
+      font-size:.72rem;
+      font-weight:900;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      white-space:nowrap;
+    }
+    .fia-lp .pricing-promo strong{color:#fff;font-size:1.06rem;line-height:1.3}
+    .fia-lp .pricing-promo p{margin:0;color:#b7cee2;font-size:.9rem}
+    .fia-lp .package-description{min-height:48px;margin:12px 0 22px;color:#d6e4ef;font-size:.95rem;line-height:1.5}
+    .fia-lp .featured .package-description{color:#5e6f7a}
+    .fia-lp .package-price-anchor{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:9px}
+    .fia-lp .package-price-anchor span{color:#b7cee2;font-size:.76rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase}
+    .fia-lp .featured .package-price-anchor span{color:#6f7e88}
+    .fia-lp .package-price-anchor del{color:#b7cee2;font-size:1rem;font-weight:700;text-decoration-thickness:2px;text-decoration-color:#ff8d8d}
+    .fia-lp .featured .package-price-anchor del{color:#6f7e88}
+    .fia-lp .package-price-row{display:flex;align-items:flex-end;justify-content:space-between;gap:14px}
+    .fia-lp .package-price-row .package-price{margin:0}
+    .fia-lp .package-discount{
+      display:inline-flex;
+      align-items:center;
+      min-height:28px;
+      margin-bottom:5px;
+      padding:5px 9px;
+      border-radius:999px;
+      background:rgba(79,209,161,.16);
+      color:#76e5bb;
+      font-size:.74rem;
+      font-weight:900;
+      white-space:nowrap;
+    }
+    .fia-lp .featured .package-discount{background:rgba(35,168,124,.12);color:#17855f}
+    .fia-lp .package-lock{margin:8px 0 20px;color:#4fd1a1;font-size:.86rem;font-weight:800}
+    .fia-lp .featured .package-lock{color:#17855f}
+    .fia-lp .package-divider{height:1px;margin:0 0 20px;border:0;background:rgba(234,242,248,.16)}
+    .fia-lp .featured .package-divider{background:rgba(6,55,108,.13)}
+    .fia-lp .package-cta-note{margin:10px 0 0;text-align:center;color:#b7cee2;font-size:.78rem}
+    .fia-lp .featured .package-cta-note{color:#6f7e88}
+
+    /* Testimonios: marquee sin dependencias ni identidades inventadas */
+    .fia-lp .testimonial-marquee-section{overflow:hidden;background:#fff}
+    .fia-lp .testimonial-marquee-head{text-align:center;max-width:760px;margin:0 auto 28px}
+    .fia-lp .testimonial-marquee-head .section-title{margin-left:auto;margin-right:auto}
+    .fia-lp .testimonial-marquee-head .section-intro{margin-left:auto;margin-right:auto}
+    .fia-lp .testimonial-marquee-shell{display:flex;flex-direction:column;gap:16px}
+    .fia-lp .testimonial-marquee-row{position:relative;width:min(1180px,100%);margin:0 auto;overflow:hidden;padding:5px 0}
+    .fia-lp .testimonial-marquee-row::before,
+    .fia-lp .testimonial-marquee-row::after{
+      content:"";
+      position:absolute;
+      z-index:3;
+      top:0;
+      bottom:0;
+      width:clamp(36px,8vw,120px);
+      pointer-events:none;
+    }
+    .fia-lp .testimonial-marquee-row::before{left:0;background:linear-gradient(90deg,#fff,rgba(255,255,255,0))}
+    .fia-lp .testimonial-marquee-row::after{right:0;background:linear-gradient(270deg,#fff,rgba(255,255,255,0))}
+    .fia-lp .testimonial-marquee-track{display:flex;width:max-content;will-change:transform;animation:fiaTestimonialMarquee 34s linear infinite}
+    .fia-lp .testimonial-marquee-row.reverse .testimonial-marquee-track{animation-direction:reverse;animation-duration:40s}
+    .fia-lp .testimonial-marquee-row:hover .testimonial-marquee-track,
+    .fia-lp .testimonial-marquee-row:focus-within .testimonial-marquee-track{animation-play-state:paused}
+    .fia-lp .testimonial-marquee-group{display:flex;gap:18px;padding-right:18px}
+    .fia-lp .testimonial-card{
+      display:flex;
+      flex-direction:column;
+      width:clamp(280px,31vw,360px);
+      min-height:220px;
+      padding:22px;
+      border:1px solid rgba(6,55,108,.12);
+      border-radius:20px;
+      background:#fdfcf9;
+      box-shadow:0 22px 48px -38px rgba(6,55,108,.65);
+    }
+    .fia-lp .testimonial-user{display:grid;grid-template-columns:44px 1fr auto;gap:11px;align-items:center}
+    .fia-lp .testimonial-avatar{display:grid;place-items:center;width:44px;height:44px;border-radius:50%;background:#06376c;color:#4fd1a1;font-size:.78rem;font-weight:900;letter-spacing:.04em}
+    .fia-lp .testimonial-user strong{display:block;color:#06376c;font-size:.92rem;line-height:1.2}
+    .fia-lp .testimonial-user small{display:block;margin-top:3px;color:#6f7e88;font-size:.75rem}
+    .fia-lp .testimonial-verified{display:grid;place-items:center;width:21px;height:21px;border-radius:50%;background:#2196f3;color:#fff;font-size:.72rem;font-weight:900}
+    .fia-lp .testimonial-card blockquote{margin:22px 0 20px;color:#1b2f45;font-size:1rem;font-weight:600;line-height:1.55;flex:1}
+    .fia-lp .testimonial-card footer{display:flex;justify-content:space-between;gap:12px;color:#6f7e88;font-size:.76rem}
+    .fia-lp .testimonial-stars{color:#e4aa22;letter-spacing:.08em}
+    @keyframes fiaTestimonialMarquee{to{transform:translateX(-50%)}}
+
+    @media(max-width:820px){
+      .fia-lp .modal .modal-flow{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .fia-lp .pricing-promo{grid-template-columns:1fr;text-align:center;justify-items:center}
+      .fia-lp .pricing-promo .promo-kicker{grid-row:auto}
+      .fia-lp .package-description{min-height:0}
+    }
+    @media(max-width:520px){
+      .fia-lp .modal .modal-flow{grid-template-columns:1fr}
+      .fia-lp .modal .modal-step{padding:18px 15px}
+      .fia-lp .package-price-row{align-items:flex-start;flex-direction:column;gap:3px}
+      .fia-lp .testimonial-card{width:82vw;min-height:210px}
+    }
+    @media(prefers-reduced-motion:reduce){
+      .fia-lp .testimonial-marquee-track{animation:none;transform:none}
+      .fia-lp .testimonial-marquee-row{overflow-x:auto;scrollbar-width:thin}
+      .fia-lp .testimonial-marquee-row::before,.fia-lp .testimonial-marquee-row::after{display:none}
+    }
+  </style>
+
 </head>
 <body>
   <a class="skip-link" href="#contenido">Saltar al contenido principal</a>
@@ -392,28 +564,50 @@
       <div class="wrap">
         <div data-reveal>
           <div class="label">Paquetes</div>
-          <h2 class="section-title">Elige el plan que sí corresponde a tu operación.</h2>
-          <p class="section-intro">Empieza con tres días gratis. Si tus necesidades cambian, puedes ajustar el plan sin contratos ni plazos forzosos.</p>
+          <h2 class="section-title">Activa hoy tu tarifa con 50% de descuento permanente.</h2>
+          <p class="section-intro">Compara la cuota vigente con el precio que conservas al contratar ahora. Empieza con tres días gratis y elige según el volumen real de tu operación.</p>
+        </div>
+
+        <div class="pricing-promo" data-reveal>
+          <span class="promo-kicker">Oferta de lanzamiento</span>
+          <strong>Contrata ahora y conserva 50% de descuento sobre la cuota vigente.</strong>
+          <p>El descuento se mantiene mientras tu suscripción permanezca activa.</p>
         </div>
 
         <div class="packages-grid">
+          <output class="floating-invoice-counter" data-invoice-counter data-invoice-label="1051 facturas realizadas" aria-live="polite" aria-atomic="true" aria-label="1051 facturas realizadas" tabindex="0"><span data-invoice-count>1051</span></output>
           <article class="package-card" data-reveal style="--reveal-delay:80ms">
             <span class="package-name">Individual</span>
-            <div class="package-price">$90 <small>/ mes</small></div>
+            <p class="package-description">Para profesionistas y personas que facturan por su cuenta.</p>
+            <div class="package-price-anchor"><span>Cuota vigente</span><del>$180 / mes</del></div>
+            <div class="package-price-row">
+              <div class="package-price">$90 <small>/ mes</small></div>
+              <span class="package-discount">50% menos</span>
+            </div>
+            <p class="package-lock">Tu precio con descuento, mientras sigas activo.</p>
+            <hr class="package-divider">
             <p class="package-folios">Hasta 15 folios*</p>
             <ul class="package-list">
               <li>Facturas CFDI 4.0 por WhatsApp</li>
-              <li>Complementos de pago automáticos</li>
+              <li>Complementos de pago</li>
               <li>Notas de crédito y cancelaciones</li>
               <li>Reporte mensual en PDF y Excel</li>
             </ul>
-            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Empieza gratis</a>
+            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Activar mi 50% de descuento</a>
+            <p class="package-cta-note">3 días gratis · sin tarjeta</p>
           </article>
 
           <article class="package-card featured" data-reveal style="--reveal-delay:160ms">
             <span class="package-badge">Más popular</span>
             <span class="package-name">Emprendedor</span>
-            <div class="package-price">$155 <small>/ mes</small></div>
+            <p class="package-description">Para negocios que necesitan más folios y validaciones inteligentes.</p>
+            <div class="package-price-anchor"><span>Cuota vigente</span><del>$310 / mes</del></div>
+            <div class="package-price-row">
+              <div class="package-price">$155 <small>/ mes</small></div>
+              <span class="package-discount">50% menos</span>
+            </div>
+            <p class="package-lock">Tu precio con descuento, mientras sigas activo.</p>
+            <hr class="package-divider">
             <p class="package-folios">Hasta 45 folios*</p>
             <ul class="package-list">
               <li>Todo lo incluido en Individual</li>
@@ -421,12 +615,20 @@
               <li>Validación de actividad económica</li>
               <li>Detección de posibles retenciones</li>
             </ul>
-            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Empieza gratis</a>
+            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Activar mi 50% de descuento</a>
+            <p class="package-cta-note">3 días gratis · sin tarjeta</p>
           </article>
 
           <article class="package-card" data-reveal style="--reveal-delay:240ms">
             <span class="package-name">Despacho</span>
-            <div class="package-price">$199 <small>/ mes</small></div>
+            <p class="package-description">Para contadores y equipos que administran varias operaciones.</p>
+            <div class="package-price-anchor"><span>Cuota vigente</span><del>$398 / mes</del></div>
+            <div class="package-price-row">
+              <div class="package-price">$199 <small>/ mes</small></div>
+              <span class="package-discount">50% menos</span>
+            </div>
+            <p class="package-lock">Tu precio con descuento, mientras sigas activo.</p>
+            <hr class="package-divider">
             <p class="package-folios">Hasta 200 folios*</p>
             <ul class="package-list">
               <li>Todo lo incluido en Emprendedor</li>
@@ -434,20 +636,21 @@
               <li>Volumen alto para varios clientes</li>
               <li>Ideal para contadores y despachos</li>
             </ul>
-            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Empieza gratis</a>
+            <a class="package-cta" href="https://grupoips-public.vercel.ixulabs.com/register">Activar mi 50% de descuento</a>
+            <p class="package-cta-note">3 días gratis · sin tarjeta</p>
           </article>
         </div>
 
         <div class="packages-note" data-reveal>
-          <strong>* Uso justo. Si se terminan tus folios, te ayudamos a agregar más.</strong>
-          ¿Todavía tienes dudas? <a href="https://wa.me/5215544219710?text=Hola%2C%20tengo%20dudas%20sobre%20los%20planes%20de%20Factura%20IA">Habla con una persona por WhatsApp →</a>
+          <strong>* El descuento del 50% se conserva mientras mantengas activa tu suscripción. Los folios están sujetos a uso justo.</strong>
+          ¿Todavía tienes dudas? <a href="https://wa.me/5215544219710?text=Hola%2C%20tengo%20dudas%20sobre%20los%20planes%20y%20el%2050%25%20de%20descuento%20de%20Factura%20IA">Habla con una persona por WhatsApp →</a>
         </div>
 
         <div class="advisory-wrap" data-reveal>
           <details class="advisory-details" id="asesoria-details">
             <summary class="advisory-summary">
               ¿No sabes qué plan elegir?
-              <p>Déjanos tus datos y un asesor te ayudará a identificar el paquete adecuado.</p>
+              <p>Cuéntanos cómo facturas y una persona te recomendará el paquete adecuado, sin discurso técnico.</p>
             </summary>
             <div class="advisory-body">
               <div class="advisory-body-inner">
@@ -456,7 +659,6 @@
                     <label for="nombre">Nombre completo</label>
                     <input class="advisory-control" type="text" id="nombre" name="nombre" autocomplete="name" required placeholder="Ej. Juan Pérez">
                   </div>
-
                   <div class="advisory-field">
                     <label for="perfil">¿Quién eres?</label>
                     <select class="advisory-control" id="perfil" name="perfil" required>
@@ -469,23 +671,19 @@
                       <option value="Otro">Otro</option>
                     </select>
                   </div>
-
                   <div class="advisory-field">
                     <label for="telefono">Teléfono de contacto</label>
                     <input class="advisory-control" type="tel" id="telefono" name="telefono" autocomplete="tel" inputmode="tel" minlength="10" required placeholder="Ej. 5512345678">
                   </div>
-
                   <div class="advisory-field">
                     <label for="correo">Correo electrónico</label>
                     <input class="advisory-control" type="email" id="correo" name="correo" autocomplete="email" required placeholder="tu@correo.com">
                   </div>
-
                   <div class="advisory-field full">
                     <label for="necesidades">Cuéntanos brevemente qué necesitas</label>
-                    <textarea class="advisory-control" id="necesidades" name="necesidades" rows="3" required placeholder="Ej. Necesito facturar para mi pequeña empresa y busco algo ágil…"></textarea>
+                    <textarea class="advisory-control" id="necesidades" name="necesidades" rows="3" required placeholder="Ej. Emite unas 30 facturas al mes y también necesito complementos de pago…"></textarea>
                   </div>
-
-                  <button class="advisory-submit" type="submit"><span aria-hidden="true">💬</span> Enviar por WhatsApp</button>
+                  <button class="advisory-submit" type="submit"><span aria-hidden="true">💬</span> Recibir recomendación por WhatsApp</button>
                 </form>
               </div>
             </div>
@@ -495,17 +693,281 @@
     </section>
 
 
-    <section class="section" id="testimonios">
-      <div class="wrap">
-        <div class="testimonial-head" data-reveal><div><div class="label">Lo que dicen</div><h2 class="section-title">Gente que ya dejó de sufrir.</h2></div><div class="carousel-controls" aria-label="Controles de testimonios"><button class="carousel-btn" type="button" data-carousel-prev aria-label="Testimonio anterior"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-chevron-left" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path fill-rule="evenodd" d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0"/></svg></button><button class="carousel-btn" type="button" data-carousel-next aria-label="Testimonio siguiente"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-chevron-right" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path fill-rule="evenodd" d="M4.646 1.646a.5.5 0 0 1 .708 0l6 6a.5.5 0 0 1 0 .708l-6 6a.5.5 0 0 1-.708-.708L10.293 8 4.646 2.354a.5.5 0 0 1 0-.708"/></svg></button></div></div>
-        <div class="quotes-viewport" data-carousel data-reveal>
-          <div class="quotes-track">
-            <article class="quote"><div class="stars" aria-label="5 de 5 estrellas"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></div><span class="quote-mark">"</span><p>Está cañón, nunca me había topado con algo así. Había visto bots que te van ayudando, pero nada como esto.</p><span class="quote-by">— Usuario de Factura IA</span></article>
-            <article class="quote"><div class="stars" aria-label="5 de 5 estrellas"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></div><span class="quote-mark">"</span><p>Cualquier persona puede hacerlo. Ya no necesitas saber facturar.</p><span class="quote-by">— Usuario de Factura IA</span></article>
-            <article class="quote"><div class="stars" aria-label="5 de 5 estrellas"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="star-icon bi bi-star-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M3.612 15.443c-.386.198-.824-.149-.746-.592l.83-4.73L.173 6.765c-.329-.314-.158-.888.283-.95l4.898-.696L7.538.792c.197-.39.73-.39.927 0l2.184 4.327 4.898.696c.441.062.612.636.282.95l-3.522 3.356.83 4.73c.078.443-.36.79-.746.592L8 13.187l-4.389 2.256z"/></svg></div><span class="quote-mark">"</span><p>No necesitas descargar el comprobante: solo reenviar a Factura IA y listo.</p><span class="quote-by">— Usuario de Factura IA</span></article>
+<section class="section testimonial-marquee-section" id="testimonios">
+      <div class="wrap testimonial-marquee-head" data-reveal="">
+        <div class="label">Lo que dicen</div>
+        <h2 class="section-title">La diferencia se nota cuando dejas de pelearte con la factura.</h2>
+        <p class="section-intro">Comentarios de personas que probaron Factura IA. Las identidades permanecen anónimas.</p>
+      </div>
+      <div class="testimonial-marquee-shell" aria-label="Testimonios de usuarios" data-reveal="">
+        <div class="testimonial-marquee-row" role="list">
+          <div class="testimonial-marquee-track">
+            <div class="testimonial-marquee-group"><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Está cañón, nunca me había topado con algo así. Había visto bots que te van ayudando, pero nada como esto.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Descubrimiento del producto</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Cualquier persona puede hacerlo. Ya no necesitas saber facturar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Primera factura</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“No necesitas descargar el comprobante: solo reenviar a Factura IA y listo.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Comprobantes por WhatsApp</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Hice mi factura desde el celular sin entrar a un portal ni buscar claves del SAT.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Emisión de CFDI</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Me fue guiando paso a paso y pude revisar todo antes de timbrar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Flujo guiado</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“El complemento de pago dejó de ser un proceso que siempre posponía.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Complemento de pago</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Encontré la factura por monto, confirmé los datos y terminé en pocos mensajes.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Búsqueda de facturas</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Mi cliente recibió el PDF y el XML sin que yo tuviera que enviarlos por separado.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Entrega automática</span></footer>
+              </article></div>
+            <div class="testimonial-marquee-group" aria-hidden="true"><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Está cañón, nunca me había topado con algo así. Había visto bots que te van ayudando, pero nada como esto.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Descubrimiento del producto</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Cualquier persona puede hacerlo. Ya no necesitas saber facturar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Primera factura</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“No necesitas descargar el comprobante: solo reenviar a Factura IA y listo.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Comprobantes por WhatsApp</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Hice mi factura desde el celular sin entrar a un portal ni buscar claves del SAT.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Emisión de CFDI</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Me fue guiando paso a paso y pude revisar todo antes de timbrar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Flujo guiado</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“El complemento de pago dejó de ser un proceso que siempre posponía.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Complemento de pago</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Encontré la factura por monto, confirmé los datos y terminé en pocos mensajes.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Búsqueda de facturas</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Mi cliente recibió el PDF y el XML sin que yo tuviera que enviarlos por separado.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Entrega automática</span></footer>
+              </article></div>
           </div>
         </div>
-        <div class="carousel-dots" aria-label="Seleccionar testimonio"></div>
+        <div class="testimonial-marquee-row reverse" role="list">
+          <div class="testimonial-marquee-track">
+            <div class="testimonial-marquee-group"><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Me avisó de las retenciones antes de emitir. Eso me dio mucha tranquilidad.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Validación fiscal</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Solo describí el servicio y la plataforma me ayudó con la clave correspondiente.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Sugerencia de clave SAT</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Tener guardados mis emisores y receptores hace que la siguiente factura sea mucho más rápida.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Datos recurrentes</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Pude cancelar un CFDI siguiendo opciones claras, sin perderme entre menús.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Cancelación de CFDI</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“La confirmación final es muy clara: sabes exactamente qué se va a timbrar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Confirmación previa</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“La nota de crédito fue mucho más sencilla de lo que esperaba.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Nota de crédito</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Ahora resuelvo la facturación cuando estoy fuera de la oficina, directamente desde WhatsApp.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Trabajo móvil</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Lo mejor es que no intenta reemplazar el control: te ayuda y tú confirmas cada paso.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Control del usuario</span></footer>
+              </article></div>
+            <div class="testimonial-marquee-group" aria-hidden="true"><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Me avisó de las retenciones antes de emitir. Eso me dio mucha tranquilidad.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Validación fiscal</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Solo describí el servicio y la plataforma me ayudó con la clave correspondiente.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Sugerencia de clave SAT</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Tener guardados mis emisores y receptores hace que la siguiente factura sea mucho más rápida.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Datos recurrentes</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Pude cancelar un CFDI siguiendo opciones claras, sin perderme entre menús.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Cancelación de CFDI</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“La confirmación final es muy clara: sabes exactamente qué se va a timbrar.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Confirmación previa</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“La nota de crédito fue mucho más sencilla de lo que esperaba.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Nota de crédito</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Ahora resuelvo la facturación cuando estoy fuera de la oficina, directamente desde WhatsApp.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Trabajo móvil</span></footer>
+              </article><article class="testimonial-card" role="listitem">
+                <div class="testimonial-user">
+                  <span class="testimonial-avatar" aria-hidden="true">FI</span>
+                  <div><strong>Usuario de Factura IA</strong><small>Testimonio anónimo</small></div>
+                  <span class="testimonial-verified" aria-label="Identidad protegida" title="Identidad protegida">✓</span>
+                </div>
+                <blockquote>“Lo mejor es que no intenta reemplazar el control: te ayuda y tú confirmas cada paso.”</blockquote>
+                <footer><span class="testimonial-stars" aria-label="5 de 5 estrellas">★★★★★</span><span>Control del usuario</span></footer>
+              </article></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -544,16 +1006,16 @@
   <div class="modal" data-modal role="dialog" aria-modal="true" aria-labelledby="fia-modal-title" aria-hidden="true">
     <div class="modal-card" role="document">
       <button class="modal-close" type="button" data-close-modal aria-label="Cerrar demostración"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-x-lg" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8z"/></svg></button>
-      <span class="modal-badge">Demo en 30 segundos</span>
-      <h2 id="fia-modal-title">Así se convierte un mensaje en una factura.</h2>
-      <p class="modal-lead">La experiencia elimina captura innecesaria, pero conserva la confirmación del usuario antes de timbrar.</p>
+      <span class="modal-badge">Demo real · 30 segundos</span>
+      <h2 id="fia-modal-title">Así funciona Factura IA dentro de WhatsApp.</h2>
+      <p class="modal-lead">Rosario te guía con opciones claras, reutiliza tus datos guardados y solo timbra después de que revisas el resumen.</p>
       <div class="modal-flow">
-        <div class="modal-step"><span class="modal-step-num">01</span><div><b>Escribes o adjuntas</b><span>“Factura $8,500 por diseño de identidad” o reenvías un documento.</span></div></div>
-        <div class="modal-step"><span class="modal-step-num">02</span><div><b>La IA interpreta y valida</b><span>Propone clave SAT, revisa datos y detecta posibles retenciones.</span></div></div>
-        <div class="modal-step"><span class="modal-step-num">03</span><div><b>Tú confirmas</b><span>Revisas el resumen antes de timbrar. No se ejecuta a ciegas.</span></div></div>
-        <div class="modal-step"><span class="modal-step-num">04</span><div><b>Recibes tus archivos</b><span>PDF por WhatsApp y PDF + XML por correo.</span></div></div>
+        <div class="modal-step"><span class="modal-step-num">01</span><div><b>Eliges la tarea</b><span>Escribe “Hola” y selecciona facturar, registrar un pago, crear una nota de crédito o cancelar un CFDI.</span></div></div>
+        <div class="modal-step"><span class="modal-step-num">02</span><div><b>Usas tus datos guardados</b><span>Selecciona el RFC emisor, el receptor y el correo. Solo capturas algo nuevo cuando hace falta.</span></div></div>
+        <div class="modal-step"><span class="modal-step-num">03</span><div><b>Completas lo necesario</b><span>Describe el concepto o indica monto, fecha y forma de pago. Rosario te presenta opciones fiscales comprensibles.</span></div></div>
+        <div class="modal-step"><span class="modal-step-num">04</span><div><b>Revisas y autorizas</b><span>Ves el resumen antes de timbrar. Al confirmar, recibes el PDF en WhatsApp y el PDF + XML por correo.</span></div></div>
       </div>
-      <div class="modal-actions"><a href="https://grupoips-public.vercel.ixulabs.com/register" class="btn btn-primary">Probar gratis <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-arrow-right" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a><a href="https://wa.me/5215544219710?text=Hola%2C%20quiero%20una%20demostraci%C3%B3n%20de%20Factura%20IA" class="btn btn-secondary">Solicitar demo humana</a></div>
+      <div class="modal-actions"><a href="https://grupoips-public.vercel.ixulabs.com/register" class="btn btn-primary">Probar 3 días gratis <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-arrow-right" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path fill-rule="evenodd" d="M1 8a.5.5 0 0 1 .5-.5h11.793l-3.147-3.146a.5.5 0 0 1 .708-.708l4 4a.5.5 0 0 1 0 .708l-4 4a.5.5 0 0 1-.708-.708L13.293 8.5H1.5A.5.5 0 0 1 1 8"/></svg></a><a href="https://wa.me/5215544219710?text=Hola%2C%20quiero%20una%20demo%20guiada%20de%20Factura%20IA" class="btn btn-secondary">Quiero una demo guiada</a></div>
     </div>
   </div>
 </div>
