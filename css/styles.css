@@ -4044,3 +4044,130 @@ body {
     min-height: 44px;
   }
 }
+
+
+.fia-lp .realtime {
+  position: relative;
+  overflow: hidden;
+}
+
+.fia-lp .realtime-inner {
+  position: relative;
+  min-width: 0;
+  min-height: clamp(340px, 42vw, 420px);
+  padding-inline: clamp(16px, 3vw, 32px);
+}
+
+.fia-lp .realtime-badge,
+.fia-lp .realtime-counter,
+.fia-lp .realtime-caption,
+.fia-lp .realtime-sub {
+  position: relative;
+  z-index: 6;
+}
+
+.fia-lp .realtime-counter {
+  max-width: 100%;
+}
+
+.fia-lp .realtime-number {
+  max-width: 100%;
+  font-size: clamp(3.5rem, 11vw, 7rem);
+}
+
+.fia-lp .realtime-caption {
+  max-width: min(100%, 34rem);
+  line-height: 1.15;
+  text-wrap: balance;
+}
+
+.fia-lp .realtime-sub {
+  justify-content: center;
+  max-width: 100%;
+  text-align: center;
+}
+
+.fia-lp .rt-card {
+  max-width: min(240px, 36vw);
+}
+
+
+@media (max-width: 920px) {
+  .fia-lp .realtime {
+    padding-block: clamp(48px, 9vw, 68px);
+  }
+
+  .fia-lp .realtime-inner {
+    min-height: auto;
+    padding-block: 24px;
+  }
+  .fia-lp .rt-card,
+  .fia-lp .rt-today {
+    display: none !important;
+  }
+
+  .fia-lp .realtime-number {
+    font-size: clamp(4rem, 16vw, 6rem);
+  }
+}
+
+
+@media (max-width: 560px) {
+  .fia-lp .realtime {
+    padding-block: 44px;
+  }
+
+  .fia-lp .realtime-inner {
+    width: 100%;
+    padding: 12px 14px 20px;
+  }
+
+  .fia-lp .realtime-badge {
+    gap: 7px;
+    padding: 7px 13px;
+
+    font-size: 0.68rem;
+    letter-spacing: 0.11em;
+  }
+
+  .fia-lp .realtime-counter {
+    margin: 22px 0 12px;
+    padding: 0;
+  }
+
+  .fia-lp .realtime-number {
+    padding: 0.04em 0.03em 0.08em;
+
+    font-size: clamp(4rem, 23vw, 5.75rem);
+    line-height: 0.95;
+    letter-spacing: -0.055em;
+  }
+
+  .fia-lp .realtime-caption {
+    font-size: clamp(1.18rem, 6.5vw, 1.55rem);
+    line-height: 1.12;
+  }
+
+  .fia-lp .realtime-sub {
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: 13px;
+
+    font-size: 0.84rem;
+  }
+}
+
+/* Teléfonos muy estrechos */
+@media (max-width: 360px) {
+  .fia-lp .realtime-inner {
+    padding-inline: 10px;
+  }
+
+  .fia-lp .realtime-number {
+    font-size: clamp(3.65rem, 22vw, 4.75rem);
+  }
+
+  .fia-lp .realtime-caption {
+    font-size: 1.12rem;
+  }
+}
