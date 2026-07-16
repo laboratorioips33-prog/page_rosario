@@ -32,93 +32,115 @@
     reveals.forEach(el=>observer.observe(el));
   }else reveals.forEach(el=>el.classList.add('in'));
 
-  // Persistent invoice counter: up to 15 randomly timed additions per day.
+  // Persistent invoice counter. Se hacen 15–20 facturas/día (aleatorio); repartidas en 24 h,
+  // eso da un incremento cada ~72–96 min. Mismo ritmo con la página abierta o cerrada.
+  // El total siempre se guarda y nunca se reinicia.
   const invoiceCounter=root.querySelector('[data-invoice-counter]');
   if(invoiceCounter){
-    const dailyLimit=15;
-    const initialTotal=1051;
-    const counterStorageKey='factura-ia-invoice-counter';
+    const baseTotal=1307;                 // punto de partida actual
+    const minDaily=15, maxDaily=20;       // facturas por día (aleatorio)
+    const dayMs=86400000;
+    const storageKey='factura-ia-invoice-counter';
     const countEl=invoiceCounter.querySelector('[data-invoice-count]');
-    let counterTimer;
-    let memoryState;
+    const todayEl=root.querySelector('[data-invoice-today]');
+    const cards=[...root.querySelectorAll('.rt-card')];
+    const numFmt=new Intl.NumberFormat('es-MX');
+    const phrases=['Hace unos segundos','Justo ahora','Hace 2 seg','Hace 4 seg','Hace 7 seg','Hace 11 seg'];
+    let state=null,liveTimer=null,cardTimer=null,hasAnimated=false;
 
-    function dateKey(date){
-      const year=date.getFullYear();
-      const month=String(date.getMonth()+1).padStart(2,'0');
-      const day=String(date.getDate()).padStart(2,'0');
-      return year+'-'+month+'-'+day;
+    // Tiempo hasta la próxima factura = 24 h / (15–20 al día), con una variación aleatoria de ±15%.
+    function invoiceInterval(){
+      const perDay=minDaily+Math.floor(Math.random()*(maxDaily-minDaily+1));
+      return (dayMs/perDay)*(0.85+Math.random()*0.3);
     }
 
-    function dailySchedule(now,startAt){
-      const dayStart=new Date(now.getFullYear(),now.getMonth(),now.getDate(),8).getTime();
-      const dayEnd=new Date(now.getFullYear(),now.getMonth(),now.getDate(),20).getTime();
-      const start=Math.min(dayEnd,Math.max(dayStart,startAt||dayStart));
-      const duration=Math.max(1,dayEnd-start);
-      return Array.from({length:dailyLimit},()=>start+Math.floor(Math.random()*duration)).sort((a,b)=>a-b);
+    function dayKey(ts){const d=new Date(ts);return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+    function save(){try{window.localStorage.setItem(storageKey,JSON.stringify(state))}catch(e){}}
+    function setDisplay(v){countEl.textContent=numFmt.format(v)}
+
+    function countUp(to){
+      const from=Math.max(0,to-Math.min(to,48));
+      const duration=1100,startTime=performance.now();
+      (function step(t){
+        const p=Math.min(1,(t-startTime)/duration);
+        setDisplay(Math.round(from+(to-from)*(1-Math.pow(1-p,3))));
+        if(p<1) requestAnimationFrame(step); else setDisplay(to);
+      })(startTime);
     }
 
-    function loadState(now){
-      if(memoryState) return memoryState;
-      try{
-        const saved=window.localStorage.getItem(counterStorageKey);
-        if(saved) memoryState=JSON.parse(saved);
-      }catch(error){}
-      if(!memoryState||typeof memoryState.total!=='number'||!Array.isArray(memoryState.schedule)){
-        memoryState={
-          date:dateKey(now),
-          total:initialTotal,
-          completed:0,
-          schedule:dailySchedule(now,now.getTime())
-        };
+    // Carga el estado guardado y suma las facturas "hechas" mientras la página estuvo cerrada.
+    function load(){
+      const now=Date.now();
+      if(!state){
+        try{const saved=window.localStorage.getItem(storageKey);if(saved)state=JSON.parse(saved);}catch(e){}
       }
-      return memoryState;
+      if(!state||typeof state.total!=='number'){state={total:baseTotal,today:0,day:dayKey(now),last:now};}
+      if(state.total<baseTotal)state.total=baseTotal;      // nunca por debajo del punto actual
+      if(typeof state.today!=='number')state.today=0;
+      if(!state.day)state.day=dayKey(now);
+      if(typeof state.last!=='number')state.last=now;
+      if(state.day!==dayKey(now)){state.day=dayKey(now);state.today=0;} // "hoy" reinicia; el total no
+      let elapsed=Math.min(Math.max(0,now-state.last),30*dayMs);
+      const perInvoice=dayMs/(minDaily+Math.floor(Math.random()*(maxDaily-minDaily+1)));
+      const away=Math.floor(elapsed/perInvoice);
+      if(away>0){state.total+=away;state.today+=away;}
+      state.last=now;
+      save();
     }
 
-    function saveState(){
-      try{window.localStorage.setItem(counterStorageKey,JSON.stringify(memoryState))}catch(error){}
-    }
-
-    function daysBetween(from,to){
-      const start=new Date(from+'T00:00:00');
-      const end=new Date(to+'T00:00:00');
-      return Math.max(0,Math.round((end-start)/86400000));
-    }
-
-    function renderInvoiceCounter(){
-      const now=new Date();
-      const state=loadState(now);
-      const today=dateKey(now);
-      const elapsedDays=daysBetween(state.date,today);
-
-      if(elapsedDays){
-        state.total+=dailyLimit-Math.min(dailyLimit,state.completed||0);
-        state.total+=Math.max(0,elapsedDays-1)*dailyLimit;
-        state.date=today;
-        state.completed=0;
-        state.schedule=dailySchedule(now);
+    function updateUI(pop){
+      if(!hasAnimated&&!prefersReduced){hasAnimated=true;countUp(state.total);}
+      else{
+        setDisplay(state.total);
+        if(pop&&!prefersReduced){countEl.classList.remove('rt-num-pop');void countEl.offsetWidth;countEl.classList.add('rt-num-pop');}
       }
-
-      const nowTime=now.getTime();
-      const completed=Math.min(dailyLimit,state.schedule.filter(time=>time<=nowTime).length);
-      const newInvoices=Math.max(0,completed-(state.completed||0));
-      state.total+=newInvoices;
-      state.completed=completed;
-      const nextUpdate=state.schedule.find(time=>time>nowTime);
-
-      countEl.textContent=String(state.total);
-      const counterLabel=state.total+' facturas realizadas';
-      invoiceCounter.dataset.invoiceLabel=counterLabel;
-      invoiceCounter.setAttribute('aria-label',counterLabel);
-      saveState();
-
-      window.clearTimeout(counterTimer);
-      const tomorrow=new Date(now.getFullYear(),now.getMonth(),now.getDate()+1).getTime();
-      const nextTime=nextUpdate||tomorrow;
-      counterTimer=window.setTimeout(renderInvoiceCounter,Math.max(1000,nextTime-nowTime+100));
+      if(todayEl)todayEl.textContent=numFmt.format(state.today);
     }
 
-    renderInvoiceCounter();
-    document.addEventListener('visibilitychange',()=>{if(!document.hidden)renderInvoiceCounter()});
+    // Resalta al azar una de las tarjetas flotantes con un texto reciente.
+    function flashCard(){
+      if(prefersReduced||!cards.length)return;
+      const card=cards[Math.floor(Math.random()*cards.length)];
+      const small=card.querySelector('small');
+      if(small)small.textContent=phrases[Math.floor(Math.random()*phrases.length)];
+      card.classList.add('rt-hit');
+      window.setTimeout(()=>card.classList.remove('rt-hit'),1600);
+    }
+
+    // Una factura en vivo: sube el número, lo guarda y anima una tarjeta.
+    function makeInvoice(){
+      state.total+=1;
+      state.today+=1;
+      state.last=Date.now();
+      save();
+      updateUI(true);
+      flashCard();
+    }
+
+    // Próxima factura al ritmo real (~72–96 min). El total sube y se guarda.
+    function scheduleNextInvoice(){
+      window.clearTimeout(liveTimer);
+      if(document.hidden)return;
+      liveTimer=window.setTimeout(()=>{makeInvoice();scheduleNextInvoice();},invoiceInterval());
+    }
+
+    // Solo decorativo: una tarjeta se ilumina al azar cada 5–9 s (no cambia el número).
+    function scheduleCardFlash(){
+      window.clearTimeout(cardTimer);
+      if(document.hidden)return;
+      cardTimer=window.setTimeout(()=>{flashCard();scheduleCardFlash();},5000+Math.random()*4000);
+    }
+
+    function startLive(){scheduleNextInvoice();scheduleCardFlash();}
+    function stopLive(){window.clearTimeout(liveTimer);window.clearTimeout(cardTimer);}
+
+    load();
+    updateUI(false);
+    startLive();
+    document.addEventListener('visibilitychange',()=>{
+      if(document.hidden){stopLive();}
+      else{load();updateUI(false);startLive();}
+    });
   }
 
   // Mobile menu.

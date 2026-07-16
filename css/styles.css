@@ -190,7 +190,12 @@
 .fia-lp .mini-list{display:grid;gap:11px;list-style:none}
 .fia-lp .mini-list li{display:flex;gap:9px;align-items:flex-start;color:var(--cream-on-navy);font-size:.94rem}
 .fia-lp .mini-list li::before{content:"";display:block;width:21px;height:21px;flex:none;border-radius:7px;background-color:var(--mint);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 4 4L19 6' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px 15px no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='m5 12 4 4L19 6' fill='none' stroke='black' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/15px 15px no-repeat}
-.fia-lp .workflow{display:grid;gap:10px;padding:21px;border:1px solid rgba(234,242,248,.1);border-radius:20px;backg…108 tokens truncated…d)}
+.fia-lp .workflow{display:grid;gap:10px;padding:21px;border:1px solid rgba(234,242,248,.1);border-radius:20px;background:rgba(3,31,60,.55);box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.fia-lp .flow-msg{justify-self:start;max-width:88%;padding:12px 14px;border-radius:15px 15px 15px 5px;background:#fff;color:var(--text);box-shadow:0 10px 24px rgba(0,0,0,.12);font-size:.92rem;line-height:1.45;overflow-wrap:anywhere}
+.fia-lp .flow-msg.user{justify-self:end;border-radius:15px 15px 5px 15px;background:var(--mint);color:var(--navy-deep)}
+.fia-lp .flow-msg small{display:block;margin-top:4px;color:var(--muted);font-size:.78rem;line-height:1.4}
+.fia-lp .flow-msg.user small{color:rgba(4,40,79,.72)}
+.fia-lp .flow-msg .ok{color:var(--mint-deep)}
 .fia-lp .flow-progress{height:7px;margin-top:3px;border-radius:999px;background:rgba(255,255,255,.1);overflow:hidden}
 .fia-lp .flow-progress span{display:block;width:100%;height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--mint-deep),var(--mint));transform-origin:left;animation:progressLoad 2.4s ease-in-out infinite}
 @keyframes progressLoad{0%{transform:scaleX(.08)}70%,100%{transform:scaleX(1)}}
@@ -502,73 +507,128 @@ body {
 }
 
 /* Floating invoice counter */
-.fia-lp .floating-invoice-counter {
-  position: fixed;
-  z-index: 80;
-  top: 92px;
-  right: clamp(14px, 3vw, 42px);
-  display: grid;
-  width: clamp(78px, 9vw, 104px);
-  aspect-ratio: 1;
-  place-items: center;
-  border: 1px solid rgba(255, 255, 255, 0.42);
-  border-radius: 50%;
-  color: var(--navy-deep);
-  background: linear-gradient(145deg, #7be4bd, var(--mint));
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.58);
-  font-family: var(--display);
-  font-size: clamp(1.5rem, 3.1vw, 2.35rem);
-  font-weight: 850;
-  letter-spacing: -0.07em;
-  line-height: 1;
-  cursor: default;
-  transition: transform 200ms ease, box-shadow 200ms ease, background-color 200ms ease;
+/* ============ En tiempo real (contador) ============ */
+.fia-lp .realtime{position:relative;overflow:hidden;padding:clamp(54px,7vw,88px) 0;background:radial-gradient(120% 120% at 50% -10%,#fbfaf7,var(--cream) 60%)}
+.fia-lp .realtime-grid{position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(rgba(35,168,124,.22) 1.4px,transparent 1.4px);background-size:26px 26px;-webkit-mask:radial-gradient(75% 75% at 50% 45%,#000,transparent 78%);mask:radial-gradient(75% 75% at 50% 45%,#000,transparent 78%)}
+.fia-lp .realtime-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;min-height:clamp(300px,42vw,420px);justify-content:center}
+.fia-lp .realtime-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 16px;border:1px solid rgba(35,168,124,.32);border-radius:999px;background:rgba(255,255,255,.72);backdrop-filter:blur(8px);color:var(--mint-deep);font-family:var(--mono);font-size:.74rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+.fia-lp .realtime-badge .rt-dot{width:8px;height:8px;border-radius:50%;background:var(--mint);box-shadow:0 0 0 0 rgba(79,209,161,.6);animation:rtPulse 2s ease-out infinite}
+@keyframes rtPulse{0%{box-shadow:0 0 0 0 rgba(79,209,161,.55)}70%{box-shadow:0 0 0 10px rgba(79,209,161,0)}100%{box-shadow:0 0 0 0 rgba(79,209,161,0)}}
+.fia-lp .realtime-counter{
+  display:block;
+  margin:25px 0 15px;
+  padding:.08em .15em;
+  line-height:1;
+  overflow:visible;
 }
 
-.fia-lp .floating-invoice-counter::after {
-  content: attr(data-invoice-label);
-  position: absolute;
-  top: calc(100% + 12px);
-  right: 0;
-  width: max-content;
-  max-width: min(260px, calc(100vw - 28px));
-  padding: 9px 12px;
-  border: 1px solid rgba(234, 242, 248, 0.16);
-  border-radius: 10px;
-  color: #fff;
-  background: rgba(4, 40, 79, 0.94);
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.22);
-  font-family: var(--body);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: normal;
-  line-height: 1.3;
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(-5px);
-  transition: opacity 180ms ease, transform 180ms ease;
+.fia-lp .realtime-number{
+  display:inline-block;
+  padding:.04em .08em .1em;
+
+  font-family:"Hanken Grotesk", Arial;
+  font-size:clamp(3.5rem, 11vw, 7rem);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.045em;
+  font-variant-numeric:tabular-nums lining-nums;
+  white-space:nowrap;
+
+  color:var(--navy);
+
+  /* Evita artefactos sobre los bordes del 8 */
+  background:none;
+  -webkit-background-clip:initial;
+  background-clip:initial;
+  -webkit-text-fill-color:currentColor;
+
+  text-shadow:0 14px 28px rgba(4,40,79,.12);
+  filter:none;
 }
 
-@media (hover: hover) {
-  .fia-lp .floating-invoice-counter:hover {
-    transform: translateY(-3px) scale(1.035);
-    box-shadow: 0 23px 44px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.62);
-  }
+  -webkit-background-clip:text;
+  background-clip:text;
+  -webkit-text-fill-color:transparent;
 
-  .fia-lp .floating-invoice-counter:hover::after {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  /* Más limpio que text-shadow con texto transparente */
+  filter:drop-shadow(
+    0 14px 18px rgba(4,40,79,.14)
+  );
+}
+.fia-lp .realtime-caption{font-family:var(--display);font-weight:700;font-size:clamp(1.15rem,2.4vw,1.7rem);color:var(--navy);letter-spacing:-.02em}
+.fia-lp .realtime-caption .hl{color:var(--mint-deep)}
+.fia-lp .realtime-sub{display:inline-flex;align-items:center;gap:8px;margin-top:14px;color:var(--muted);font-size:.9rem}
+.fia-lp .realtime-sub .rt-live{width:7px;height:7px;border-radius:50%;background:var(--mint-deep);animation:rtBlink 1.6s ease-in-out infinite}
+@keyframes rtBlink{50%{opacity:.25}}
+.fia-lp .rt-num-pop{animation:rtPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes rtPop{35%{transform:translateY(-6px) scale(1.04)}100%{transform:none}}
+
+/* Tarjeta flotante de notificación */
+.fia-lp .rt-card{position:absolute;z-index:3;display:flex;align-items:center;gap:11px;padding:11px 15px 11px 12px;border:1px solid rgba(6,55,108,.1);border-radius:15px;background:rgba(255,255,255,.92);box-shadow:0 18px 40px rgba(4,40,79,.14);backdrop-filter:blur(10px);text-align:left;white-space:nowrap;opacity:0;transform:translateY(12px);animation:rtCardIn .6s ease forwards;will-change:transform;transition:box-shadow .3s ease,border-color .3s ease}
+.fia-lp .rt-card.rt-hit{z-index:5;border-color:rgba(79,209,161,.75);box-shadow:0 22px 52px rgba(35,168,124,.32),inset 0 0 0 2px rgba(79,209,161,.55)}
+.fia-lp .rt-card .rt-ic{display:grid;place-items:center;width:34px;height:34px;flex:none;border-radius:10px;background:var(--mint-soft);color:var(--mint-deep);transition:background .3s ease,color .3s ease}
+.fia-lp .rt-card.rt-hit .rt-ic{background:var(--mint);color:var(--navy-deep)}
+.fia-lp .rt-card .rt-ic svg{width:17px;height:17px;fill:currentColor}
+.fia-lp .rt-card b{display:block;color:var(--navy);font-size:.86rem;font-weight:750;line-height:1.15}
+.fia-lp .rt-card small{display:flex;align-items:center;gap:5px;margin-top:2px;color:var(--muted);font-size:.72rem}
+.fia-lp .rt-card small::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--mint);flex:none}
+.fia-lp .rt-card.floaty{animation:rtCardIn .6s ease forwards,rtFloat 5.5s ease-in-out infinite}
+@keyframes rtCardIn{to{opacity:1;transform:none}}
+@keyframes rtFloat{50%{transform:translateY(-9px)}}
+.fia-lp .rt-1{top:6%;left:2%;animation-delay:.2s,1s}
+.fia-lp .rt-2{top:40%;left:-2%;animation-delay:.5s,0s}
+.fia-lp .rt-3{bottom:8%;left:6%;animation-delay:.8s,2.2s}
+.fia-lp .rt-4{top:12%;right:3%;animation-delay:.35s,1.6s}
+.fia-lp .rt-5{bottom:12%;right:1%;animation-delay:.65s,.6s}
+
+/* Badge circular "Facturas hoy" */
+.fia-lp .rt-today{
+  position:absolute;
+  z-index:3;
+  top:-15%;
+  right:3%;
+
+  display:grid;
+  place-items:center;
+  place-content:center;
+  grid-auto-rows:max-content;
+  row-gap:10px;
+
+  width:clamp(84px, 9vw, 104px);
+  aspect-ratio:1;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.5);
+
+  background:
+    radial-gradient(
+      120% 120% at 30% 20%,
+      #7be4bd,
+      var(--mint) 70%
+    );
+
+  box-shadow:
+    0 20px 40px rgba(35,168,124,.32),
+    inset 0 1px 0 rgba(255,255,255,.6);
+
+  color:var(--navy-deep);
+  text-align:center;
+  animation:rtFloat 6s ease-in-out infinite;
 }
 
-.fia-lp .floating-invoice-counter:focus-visible {
-  outline: 3px solid #fff;
-  outline-offset: 4px;
+.fia-lp .rt-today-label{
+  font-size:.62rem;
+  font-weight:700;
+  line-height:1;
+  letter-spacing:.02em;
+  opacity:.85;
 }
 
-.fia-lp .floating-invoice-counter:focus-visible::after {
-  opacity: 1;
-  transform: translateY(0);
+.fia-lp .rt-today-num{
+  font-family:var(--display);
+  font-weight:850;
+  font-size:clamp(1.9rem, 2.4vw, 2.5rem);
+  line-height:.85;
+   transform:translateY(-1px);
 }
 
 /* Navigation */
@@ -1364,13 +1424,6 @@ body {
     width: 80vw;
     height: 8rem;
   }
-
-  .fia-lp .floating-invoice-counter {
-    top: 84px;
-    right: 12px;
-    width: 74px;
-    font-size: 1.45rem;
-  }
 }
 
 @media (max-width: 500px) {
@@ -1448,3 +1501,370 @@ body {
   outline: 3px solid var(--brand-mint);
   outline-offset: 3px;
 }
+
+/* ==========================================================
+   Responsive system v2 — layout fluid, tabs and overflow fixes
+   ========================================================== */
+.fia-lp {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: clip;
+}
+
+@supports not (overflow: clip) {
+  .fia-lp { overflow-x: hidden; }
+}
+
+.fia-lp :where(
+  .wrap,
+  .hero-grid,
+  .hero-copy,
+  .phone-stage,
+  .proof-grid,
+  .steps,
+  .tabs-shell,
+  .tabs-nav,
+  .tab-panel,
+  .tab-copy,
+  .workflow,
+  .diff-grid,
+  .diff-copy,
+  .care-grid,
+  .bento,
+  .plans,
+  .testimonial-head,
+  .quotes-viewport,
+  .footer-grid,
+  .task-grid,
+  .task-card,
+  .smart-heading
+) {
+  min-width: 0;
+}
+
+.fia-lp .wrap {
+  width: min(1180px, calc(100% - clamp(24px, 5vw, 48px)));
+}
+
+.fia-lp .section {
+  padding-block: clamp(56px, 8vw, 112px);
+}
+
+.fia-lp :where(h1, h2, h3, p, li, a, button, small, strong, span) {
+  overflow-wrap: break-word;
+}
+
+.fia-lp :where(.hero h1 .hl, .agitate .underline) {
+  white-space: normal;
+}
+
+/* Tabs: no fixed-width children and no clipped neighboring labels. */
+.fia-lp .tabs-shell {
+  overflow: hidden;
+}
+
+.fia-lp .tabs-nav {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  overflow: visible;
+  overscroll-behavior-inline: contain;
+}
+
+.fia-lp .tab-btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
+  padding: 11px clamp(10px, 1.8vw, 18px);
+  white-space: normal;
+  text-align: center;
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.fia-lp .tab-panel {
+  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+  gap: clamp(24px, 4vw, 42px);
+  padding: clamp(24px, 5vw, 52px);
+}
+
+.fia-lp .tab-copy h3 {
+  font-size: clamp(1.8rem, 3.2vw, 2.35rem);
+}
+
+.fia-lp .tab-copy p,
+.fia-lp .mini-list li,
+.fia-lp .flow-msg {
+  line-height: 1.55;
+}
+
+.fia-lp .workflow {
+  width: 100%;
+  min-width: 0;
+  padding: clamp(15px, 2.5vw, 21px);
+}
+
+.fia-lp .flow-msg {
+  max-width: min(88%, 38rem);
+  overflow-wrap: anywhere;
+}
+
+.fia-lp .flow-msg.user {
+  justify-self: end;
+}
+
+/* Fluid media and cards. */
+.fia-lp :where(img, video, canvas) {
+  max-width: 100%;
+  height: auto;
+}
+
+.fia-lp .phone {
+  width: min(326px, 100%);
+  max-width: 100%;
+}
+
+.fia-lp :where(.step, .care-card, .feature-card, .plan, .quote, .demo-card, .task-card) {
+  min-width: 0;
+}
+
+.fia-lp .floating-actions {
+  right: max(14px, env(safe-area-inset-right));
+  bottom: max(14px, env(safe-area-inset-bottom));
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .fia-lp .hero-grid,
+  .fia-lp .tab-panel,
+  .fia-lp .diff-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fia-lp .hero-grid {
+    gap: 36px;
+  }
+
+  .fia-lp .tab-panel {
+    align-items: start;
+  }
+
+  .fia-lp .workflow {
+    max-width: 720px;
+  }
+
+  .fia-lp .steps,
+  .fia-lp .plans,
+  .fia-lp .care-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fia-lp .plan.popular,
+  .fia-lp .plan.popular:hover {
+    transform: none;
+  }
+
+  .fia-lp .footer-grid {
+    grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+}
+
+/* Small tablet / large phone */
+@media (max-width: 700px) {
+  .fia-lp .wrap {
+    width: min(1180px, calc(100% - 32px));
+  }
+
+  .fia-lp .section {
+    padding-block: clamp(56px, 12vw, 76px);
+  }
+
+  .fia-lp .section-title {
+    font-size: clamp(2rem, 8.5vw, 2.8rem);
+    line-height: 1.03;
+  }
+
+  .fia-lp .section-intro {
+    font-size: 1rem;
+    line-height: 1.65;
+  }
+
+  .fia-lp .tabs-shell {
+    margin-top: 34px;
+    border-radius: 20px;
+  }
+
+  .fia-lp .tabs-nav {
+    grid-template-columns: 1fr;
+    gap: 6px;
+    padding: 8px;
+  }
+
+  .fia-lp .tab-btn {
+    min-height: 44px;
+    justify-content: flex-start;
+    padding: 10px 13px;
+    text-align: left;
+    text-wrap: pretty;
+  }
+
+  .fia-lp .tab-panel {
+    gap: 26px;
+    padding: clamp(18px, 5vw, 24px);
+  }
+
+  .fia-lp .tab-copy h3 {
+    font-size: clamp(1.75rem, 8vw, 2.2rem);
+  }
+
+  .fia-lp .tab-copy p {
+    margin-block: 14px 20px;
+    font-size: 1rem;
+  }
+
+  .fia-lp .mini-list {
+    gap: 13px;
+  }
+
+  .fia-lp .mini-list li {
+    gap: 10px;
+    font-size: 0.96rem;
+  }
+
+  .fia-lp .workflow {
+    gap: 9px;
+    padding: 14px;
+    border-radius: 16px;
+  }
+
+  .fia-lp .flow-msg {
+    max-width: 94%;
+    padding: 11px 12px;
+    font-size: 0.92rem;
+  }
+
+  .fia-lp .hero-grid {
+    padding-block: 52px 76px;
+  }
+
+  .fia-lp .phone-stage {
+    min-height: auto;
+    padding-block: 20px;
+  }
+
+  .fia-lp .proof-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fia-lp .bento {
+    grid-template-columns: 1fr;
+  }
+
+  .fia-lp .feature-card,
+  .fia-lp .feature-card.wide {
+    grid-column: auto;
+  }
+
+  .fia-lp .testimonial-head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .fia-lp .modal {
+    padding: 12px;
+  }
+
+  .fia-lp .modal-card {
+    max-height: calc(100dvh - 24px);
+    border-radius: 20px;
+  }
+}
+
+/* Compact phones */
+@media (max-width: 480px) {
+  .fia-lp .wrap {
+    width: calc(100% - 24px);
+  }
+
+  .fia-lp .section {
+    padding-block: 56px;
+  }
+
+  .fia-lp .label {
+    font-size: 0.7rem;
+    letter-spacing: 0.11em;
+  }
+
+  .fia-lp .tabs-shell {
+    border-radius: 17px;
+  }
+
+  .fia-lp .tab-panel {
+    padding: 18px 15px 20px;
+  }
+
+  .fia-lp .tab-copy h3 {
+    font-size: clamp(1.65rem, 9vw, 2rem);
+  }
+
+  .fia-lp .workflow {
+    padding: 12px;
+  }
+
+  .fia-lp .flow-msg,
+  .fia-lp .flow-msg.user {
+    max-width: 100%;
+  }
+
+  .fia-lp :where(.step, .care-card, .feature-card, .plan, .quote, .demo-card) {
+    padding: 22px 18px;
+  }
+
+  .fia-lp .hero-actions,
+  .fia-lp .final-actions,
+  .fia-lp .modal-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .fia-lp :where(.hero-actions, .final-actions, .modal-actions) .btn {
+    width: 100%;
+  }
+}
+
+/* Very narrow devices */
+@media (max-width: 360px) {
+  .fia-lp .wrap {
+    width: calc(100% - 20px);
+  }
+
+  .fia-lp .tabs-nav {
+    padding: 6px;
+  }
+
+  .fia-lp .tab-panel {
+    padding-inline: 12px;
+  }
+
+  .fia-lp .tab-btn,
+  .fia-lp .flow-msg,
+  .fia-lp .mini-list li {
+    font-size: 0.9rem;
+  }
+}
+
+@media (hover: none) {
+  .fia-lp :where(.btn, .step, .care-card, .feature-card, .plan, .quote, .float-action):hover {
+    transform: none;
+  }
+}
+
+@media (pointer: coarse) {
+  .fia-lp :where(button, .btn, .tab-btn, .carousel-btn, .float-action, .menu-toggle) {
+    min-height: 44px;
+  }
+}
+
