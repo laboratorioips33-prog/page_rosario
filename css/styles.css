@@ -4880,3 +4880,418 @@ body {
   .fia-lp .testimonial-marquee-row{overflow-x:auto;scrollbar-width:thin}
   .fia-lp .testimonial-marquee-row::before,.fia-lp .testimonial-marquee-row::after{display:none}
 }
+
+/* Demostración interactiva de Factura IA dentro de WhatsApp */
+.fia-lp .phone-stage:has([data-phone-demo]){
+  min-height:620px;
+}
+
+.fia-lp .phone-stage:has([data-phone-demo]) .float-chip{
+  pointer-events:none;
+  transition:opacity .18s ease;
+}
+
+.fia-lp .phone-stage:has(.wa-menu-panel.is-open) .float-chip{opacity:0}
+
+.fia-lp .phone.wa-phone{
+  display:flex;
+  flex-direction:column;
+  width:332px;
+  height:590px;
+  max-width:calc(100vw - 40px);
+  padding:0;
+  overflow:hidden;
+  border-color:#07141d;
+  border-radius:42px;
+  background:#0b141a;
+  transform:none;
+  animation:none;
+  isolation:isolate;
+}
+
+.fia-lp .wa-phone .phone-notch{
+  top:0;
+  width:90px;
+  height:18px;
+  border-radius:0 0 13px 13px;
+  background:#07141d;
+}
+
+.fia-lp .wa-phone-bar{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:7px;
+  min-height:63px;
+  padding:20px 9px 8px;
+  background:#202c33;
+  box-shadow:0 1px 0 rgba(255,255,255,.04);
+}
+
+.fia-lp .wa-header-icon,
+.fia-lp .wa-compose-icon{
+  display:grid;
+  place-items:center;
+  flex:0 0 32px;
+  width:32px;
+  height:32px;
+  color:#aebac1;
+}
+
+.fia-lp .wa-header-icon svg,
+.fia-lp .wa-compose-icon svg,
+.fia-lp .wa-menu-close svg{
+  width:21px;
+  height:21px;
+  fill:none;
+  stroke:currentColor;
+  stroke-width:1.9;
+  stroke-linecap:round;
+  stroke-linejoin:round;
+}
+
+.fia-lp .wa-avatar{
+  flex:0 0 35px;
+  width:35px;
+  height:35px;
+  overflow:hidden;
+  background:#fff;
+}
+
+.fia-lp .wa-avatar img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  padding:4px;
+}
+
+.fia-lp .wa-contact{
+  min-width:0;
+  flex:1;
+}
+
+.fia-lp .wa-phone .phone-name{
+  overflow:hidden;
+  color:#f3f6f7;
+  font-size:.82rem;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.fia-lp .wa-phone .phone-status{
+  overflow:hidden;
+  color:#aebac1;
+  font-size:.61rem;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.fia-lp .wa-phone .phone-status::before{display:none}
+
+.fia-lp .wa-header-actions{
+  display:flex;
+  align-items:center;
+  margin-left:auto;
+}
+
+.fia-lp .wa-header-actions .wa-header-icon{
+  flex-basis:29px;
+  width:29px;
+}
+
+.fia-lp .wa-header-actions svg{width:18px;height:18px}
+
+.fia-lp .chat.wa-chat{
+  position:relative;
+  display:flex;
+  flex:1 1 auto;
+  flex-direction:column;
+  gap:9px;
+  min-height:0;
+  padding:13px 10px 16px;
+  overflow-x:hidden;
+  overflow-y:auto;
+  border-radius:0;
+  background-color:#0b141a;
+  background-image:
+    linear-gradient(rgba(11,20,26,.88),rgba(11,20,26,.88)),
+    radial-gradient(circle at 20% 30%,rgba(134,150,160,.22) 0 1px,transparent 1.5px),
+    radial-gradient(circle at 80% 70%,rgba(134,150,160,.17) 0 1px,transparent 1.5px);
+  background-position:0 0,0 0,10px 10px;
+  background-size:auto,20px 20px,20px 20px;
+  scrollbar-width:none;
+}
+
+.fia-lp .wa-chat::-webkit-scrollbar{display:none}
+
+.fia-lp .wa-day{
+  align-self:center;
+  padding:4px 9px;
+  border-radius:7px;
+  background:#182229;
+  color:#d6e0e5;
+  font-size:.61rem;
+  font-weight:700;
+  box-shadow:0 1px 2px rgba(0,0,0,.24);
+}
+
+.fia-lp .wa-msg{
+  position:relative;
+  max-width:88%;
+  padding:8px 9px 6px;
+  color:#e9edef;
+  font-size:.71rem;
+  line-height:1.38;
+  box-shadow:0 1px 2px rgba(0,0,0,.3);
+}
+
+.fia-lp .wa-msg p{margin:0 0 7px}
+.fia-lp .wa-msg p:last-of-type{margin-bottom:4px}
+.fia-lp .wa-msg strong{display:block;margin-bottom:4px;color:#fff;font-size:.72rem}
+
+.fia-lp .wa-msg-user{
+  align-self:flex-end;
+  min-width:76px;
+  padding-right:8px;
+  border-radius:8px 2px 8px 8px;
+  background:#005c4b;
+}
+
+.fia-lp .wa-msg-bot{
+  align-self:flex-start;
+  border-radius:2px 8px 8px 8px;
+  background:#202c33;
+}
+
+.fia-lp .wa-welcome{max-width:94%;padding:10px 10px 0}
+
+.fia-lp .wa-helper{
+  display:block;
+  margin:5px 0 1px;
+  color:#aebac1;
+  font-size:.65rem;
+}
+
+.fia-lp .wa-time{
+  display:block;
+  margin-top:2px;
+  color:#aebac1;
+  font-size:.56rem;
+  line-height:1;
+  text-align:right;
+}
+
+.fia-lp .wa-msg-user .wa-time span{color:#53bdeb}
+
+.fia-lp .wa-list-trigger{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  width:calc(100% + 20px);
+  min-height:46px;
+  margin:8px -10px 0;
+  padding:8px 10px;
+  border:0;
+  border-top:1px solid rgba(134,150,160,.2);
+  border-radius:0 0 8px 8px;
+  cursor:pointer;
+  background:transparent;
+  color:#00d084;
+  font:inherit;
+  font-size:.72rem;
+  font-weight:800;
+  transition:background-color .18s ease,color .18s ease;
+}
+
+.fia-lp .wa-list-trigger:hover{background:rgba(255,255,255,.055);color:#35e69c}
+.fia-lp .wa-list-trigger:active{background:rgba(255,255,255,.1)}
+.fia-lp .wa-list-trigger svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+.fia-lp .wa-list-trigger,.fia-lp .wa-menu-close,.fia-lp .wa-menu-options button{touch-action:manipulation}
+
+.fia-lp .wa-composer{
+  position:relative;
+  z-index:2;
+  display:flex;
+  flex:0 0 auto;
+  align-items:center;
+  gap:5px;
+  min-height:50px;
+  padding:6px 7px;
+  background:#0b141a;
+}
+
+.fia-lp .wa-compose-field{
+  display:flex;
+  flex:1;
+  align-items:center;
+  min-width:0;
+  height:38px;
+  border-radius:22px;
+  background:#202c33;
+  color:#8696a0;
+  font-size:.72rem;
+}
+
+.fia-lp .wa-compose-field .wa-compose-icon{flex-basis:36px;width:36px}
+.fia-lp .wa-compose-field + .wa-compose-icon{color:#d4dee3}
+
+.fia-lp .wa-menu-backdrop{
+  position:absolute;
+  z-index:8;
+  inset:0;
+  background:rgba(0,0,0,.42);
+  opacity:0;
+  transition:opacity .2s ease;
+}
+
+.fia-lp .wa-menu-backdrop.is-open{opacity:1}
+
+.fia-lp .wa-menu-panel{
+  position:absolute;
+  z-index:10;
+  inset:0;
+  display:flex;
+  flex-direction:column;
+  padding:18px 10px 16px;
+  overflow:hidden;
+  background:#111b21;
+  color:#e9edef;
+  opacity:0;
+  transform:translateY(100%);
+  transition:transform .24s cubic-bezier(.2,.8,.2,1),opacity .18s ease;
+}
+
+.fia-lp .wa-menu-panel.is-open{opacity:1;transform:translateY(0)}
+.fia-lp .wa-menu-panel[hidden],.fia-lp .wa-menu-backdrop[hidden]{display:none}
+
+.fia-lp .wa-menu-header{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  min-height:50px;
+  padding:4px 2px 8px;
+}
+
+.fia-lp .wa-menu-header h2{
+  margin:0;
+  color:#f2f5f6;
+  font-family:var(--body);
+  font-size:.83rem;
+  font-weight:700;
+}
+
+.fia-lp .wa-menu-close{
+  display:grid;
+  place-items:center;
+  flex:0 0 44px;
+  width:44px;
+  height:44px;
+  padding:0;
+  border:0;
+  border-radius:50%;
+  cursor:pointer;
+  background:transparent;
+  color:#aebac1;
+  transition:background-color .18s ease,color .18s ease;
+}
+
+.fia-lp .wa-menu-close:hover{background:#202c33;color:#fff}
+
+.fia-lp .wa-menu-options{
+  display:flex;
+  flex:1;
+  flex-direction:column;
+  padding-top:4px;
+}
+
+.fia-lp .wa-menu-options button{
+  display:flex;
+  flex:1 1 0;
+  align-items:center;
+  justify-content:space-between;
+  gap:14px;
+  width:100%;
+  min-height:54px;
+  padding:10px 12px;
+  border:0;
+  border-radius:8px;
+  cursor:pointer;
+  background:transparent;
+  color:#e9edef;
+  font:inherit;
+  font-size:.76rem;
+  font-weight:650;
+  text-align:left;
+  transition:background-color .18s ease;
+}
+
+.fia-lp .wa-menu-options button:hover{background:#202c33}
+.fia-lp .wa-menu-options button:active{background:#2a3942}
+
+.fia-lp .wa-menu-options i{
+  flex:0 0 20px;
+  width:20px;
+  height:20px;
+  border:2px solid #667781;
+  border-radius:50%;
+}
+
+.fia-lp .wa-list-trigger:focus-visible,
+.fia-lp .wa-menu-close:focus-visible,
+.fia-lp .wa-menu-options button:focus-visible{
+  outline:3px solid #5ee7b1;
+  outline-offset:2px;
+}
+
+.fia-lp .wa-demo-result{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.fia-lp .wa-demo-result .wa-msg{
+  animation:waMessageIn .25s ease both;
+}
+
+.fia-lp .wa-demo-result .wa-msg-bot{animation-delay:.12s}
+
+.fia-lp .wa-response-title{
+  display:block;
+  margin-bottom:5px;
+  color:#fff;
+  font-weight:800;
+}
+
+.fia-lp .wa-response-lines{
+  display:grid;
+  gap:3px;
+  margin-top:7px;
+  color:#d8e1e5;
+}
+
+@keyframes waMessageIn{
+  from{opacity:0;transform:translateY(8px) scale(.98)}
+  to{opacity:1;transform:none}
+}
+
+@media(max-width:520px){
+  .fia-lp .phone-stage:has([data-phone-demo]){min-height:585px;padding-block:8px}
+  .fia-lp .phone.wa-phone{width:min(326px,calc(100vw - 34px));height:560px;border-width:7px;border-radius:38px}
+  .fia-lp .wa-phone .phone-notch{width:82px;height:16px}
+  .fia-lp .wa-phone-bar{min-height:60px;padding-top:18px}
+  .fia-lp .wa-menu-options button{min-height:51px}
+}
+
+@media(max-width:360px){
+  .fia-lp .phone-stage:has([data-phone-demo]){min-height:560px}
+  .fia-lp .phone.wa-phone{height:540px}
+  .fia-lp .wa-menu-panel{padding-inline:7px}
+  .fia-lp .wa-menu-options button{min-height:48px}
+}
+
+@media(prefers-reduced-motion:reduce){
+  .fia-lp .wa-menu-panel,.fia-lp .wa-menu-backdrop,.fia-lp .wa-demo-result .wa-msg{transition:none;animation:none}
+}

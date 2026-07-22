@@ -330,8 +330,139 @@
   modal&&modal.addEventListener('click',event=>{if(event.target===modal)closeModal()});
   document.addEventListener('keydown',event=>{if(event.key==='Escape'&&modal&&modal.classList.contains('open'))closeModal()});
 
+  // Demostración interactiva del menú de Factura IA dentro de WhatsApp.
+  const phoneDemo=root.querySelector('[data-phone-demo]');
+  if(phoneDemo){
+    const phoneMenu=phoneDemo.querySelector('[data-phone-menu]');
+    const phoneBackdrop=phoneDemo.querySelector('[data-phone-menu-backdrop]');
+    const phoneMenuOpen=phoneDemo.querySelector('[data-phone-menu-open]');
+    const phoneMenuClose=phoneDemo.querySelector('[data-phone-menu-close]');
+    const phoneResult=phoneDemo.querySelector('[data-phone-result]');
+    const phoneChat=phoneDemo.querySelector('[data-phone-conversation]');
+    const phoneActions=[...phoneDemo.querySelectorAll('[data-phone-action]')];
+    const phoneResponses={
+      ingreso:{
+        label:'Facturar Ingreso',
+        title:'👋 Bienvenido. Vamos a iniciar el proceso de facturación.',
+        body:'Primero selecciona el RFC emisor para preparar tu factura.',
+        lines:['¿Desde qué RFC quieres emitir la factura?','1️⃣  XAXX010101000 · EMPRESA DEMO','2️⃣  ➕ Agregar nuevo RFC','#️⃣  Volver al menú principal']
+      },
+      complemento:{
+        label:'Complemento Pago',
+        title:'💳 Vamos a registrar un complemento de pago.',
+        body:'Puedes enviar el comprobante o indicar los datos del pago.',
+        lines:['1️⃣  📎 Enviar comprobante','2️⃣  Indicar monto, fecha y forma de pago','#️⃣  Volver al menú principal']
+      },
+      credito:{
+        label:'Nota de Crédito',
+        title:'🧾 Vamos a generar una nota de crédito.',
+        body:'Primero localizaremos la factura que deseas relacionar.',
+        lines:['1️⃣  🔎 Buscar entre mis facturas','2️⃣  📄 Enviar PDF o XML original','#️⃣  Volver al menú principal']
+      },
+      gastos:{
+        label:'Facturar Gastos',
+        title:'🧾 Registremos una factura de gasto.',
+        body:'Comparte el comprobante y Rosario organizará la información fiscal.',
+        lines:['1️⃣  📷 Tomar foto del ticket','2️⃣  📎 Adjuntar comprobante','#️⃣  Volver al menú principal']
+      },
+      cancelar:{
+        label:'Cancelar Documento',
+        title:'❌ Te ayudo a cancelar un CFDI.',
+        body:'Selecciona cómo deseas localizar el documento.',
+        lines:['1️⃣  🔎 Buscar por folio','2️⃣  Buscar por RFC y fecha','#️⃣  Volver al menú principal']
+      },
+      administrador:{
+        label:'Administrador',
+        title:'⚙️ Menú de Administrador.',
+        body:'Consulta y administra la información de tu cuenta.',
+        lines:['1️⃣  📥 Descargar facturas','2️⃣  ➕ Añadir receptor','3️⃣  📊 Reporte de facturas','#️⃣  Volver al menú principal']
+      }
+    };
+    let phoneMenuTimer=null;
+
+    function phoneTime(){
+      return new Intl.DateTimeFormat('es-MX',{hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date());
+    }
+
+    function openPhoneMenu(){
+      if(!phoneMenu||!phoneBackdrop)return;
+      window.clearTimeout(phoneMenuTimer);
+      phoneMenu.hidden=false;
+      phoneBackdrop.hidden=false;
+      phoneMenu.setAttribute('aria-hidden','false');
+      phoneMenuOpen&&phoneMenuOpen.setAttribute('aria-expanded','true');
+      window.requestAnimationFrame(()=>{
+        phoneMenu.classList.add('is-open');
+        phoneBackdrop.classList.add('is-open');
+        phoneMenuClose&&phoneMenuClose.focus({preventScroll:true});
+      });
+    }
+
+    function closePhoneMenu(restoreFocus=true){
+      if(!phoneMenu||!phoneBackdrop)return;
+      phoneMenu.classList.remove('is-open');
+      phoneBackdrop.classList.remove('is-open');
+      phoneMenu.setAttribute('aria-hidden','true');
+      phoneMenuOpen&&phoneMenuOpen.setAttribute('aria-expanded','false');
+      phoneMenuTimer=window.setTimeout(()=>{
+        phoneMenu.hidden=true;
+        phoneBackdrop.hidden=true;
+      },prefersReduced?0:240);
+      if(restoreFocus&&phoneMenuOpen)phoneMenuOpen.focus({preventScroll:true});
+    }
+
+    function makePhoneMessage(className,text,time){
+      const message=document.createElement('div');
+      message.className='wa-msg '+className;
+      const copy=document.createElement('p');
+      copy.textContent=text;
+      const stamp=document.createElement('span');
+      stamp.className='wa-time';
+      stamp.textContent=time;
+      message.append(copy,stamp);
+      return message;
+    }
+
+    function showPhoneResponse(action){
+      const response=phoneResponses[action];
+      if(!response||!phoneResult)return;
+      closePhoneMenu();
+      const delay=prefersReduced?0:250;
+      window.setTimeout(()=>{
+        phoneResult.replaceChildren();
+        const now=phoneTime();
+        const userMessage=makePhoneMessage('wa-msg-user',response.label,now+' ✓✓');
+        const botMessage=document.createElement('div');
+        botMessage.className='wa-msg wa-msg-bot';
+        const title=document.createElement('span');
+        title.className='wa-response-title';
+        title.textContent=response.title;
+        const body=document.createElement('p');
+        body.textContent=response.body;
+        const lines=document.createElement('div');
+        lines.className='wa-response-lines';
+        response.lines.forEach(line=>{const item=document.createElement('span');item.textContent=line;lines.appendChild(item)});
+        const stamp=document.createElement('span');
+        stamp.className='wa-time';
+        stamp.textContent=now;
+        botMessage.append(title,body,lines,stamp);
+        phoneResult.append(userMessage,botMessage);
+        if(phoneChat)phoneChat.scrollTo({top:phoneChat.scrollHeight,behavior:prefersReduced?'auto':'smooth'});
+        phoneMenuOpen&&phoneMenuOpen.focus({preventScroll:true});
+      },delay);
+    }
+
+    phoneMenuOpen&&phoneMenuOpen.addEventListener('click',openPhoneMenu);
+    phoneMenuClose&&phoneMenuClose.addEventListener('click',()=>closePhoneMenu());
+    phoneBackdrop&&phoneBackdrop.addEventListener('click',()=>closePhoneMenu());
+    phoneActions.forEach(button=>button.addEventListener('click',()=>showPhoneResponse(button.dataset.phoneAction)));
+    phoneDemo.addEventListener('keydown',event=>{
+      if(event.key==='Escape'&&phoneMenu&&!phoneMenu.hidden){event.stopPropagation();closePhoneMenu()}
+    });
+  }
+
   // Subtle mouse parallax only on capable desktop pointers.
-  const phone=root.querySelector('.phone');
+  const phone=root.querySelector('.phone:not([data-phone-demo])');
   if(phone&&!prefersReduced&&window.matchMedia('(pointer:fine)').matches){
     const stage=root.querySelector('.phone-stage');
     stage&&stage.addEventListener('pointermove',event=>{
