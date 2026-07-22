@@ -192,38 +192,19 @@
         <div class="instant-alerts-copy" data-reveal="left">
           <div class="label">Alertas inteligentes</div>
           <h2 class="section-title" id="alertas-title">¿Nadie te enseña qué requisitos necesita tu factura?</h2>
-          <p class="section-intro">Rosario revisa tu concepto antes de timbrar. Si no coincide con tus actividades registradas, puede llevar retenciones o se trata de un arrendamiento, te lo advierte en el momento y te pide el dato que falta.</p>
+          <p class="section-intro">Rosario te avisa antes de timbrar cuando un concepto podría llevar retenciones y te muestra exactamente las opciones disponibles en el chat.</p>
           <ul class="alert-checklist" aria-label="Validaciones que realiza Rosario">
-            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Coherencia entre concepto y actividad registrada ante el SAT</li>
-            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Posibles retenciones antes de emitir</li>
-            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Aviso para confirmar cuenta predial en facturas de arrendamiento</li>
+            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Aplicar solo retención ISR</li>
+            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Aplicar solo retención IVA o ambas retenciones</li>
+            <li><span class="alert-check-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M20 6 9 17l-5-5"/></svg></span>Continuar sin retenciones y consultar al contador</li>
           </ul>
-          <a class="text-link" href="#casos">Ver conversaciones reales de Rosario <span aria-hidden="true">→</span></a>
+          <a class="text-link" href="#revision-demo">Ver las posibles retenciones <span aria-hidden="true">→</span></a>
         </div>
 
-        <div class="alert-console" data-reveal="right" aria-label="Ejemplo de alerta fiscal de Rosario">
-          <div class="alert-console-top">
-            <span class="alert-console-avatar" aria-hidden="true">R</span>
-            <div><strong>Rosario</strong><span>Revisión antes de timbrar</span></div>
-            <span class="alert-console-status"><i aria-hidden="true"></i>En el momento</span>
-          </div>
-          <div class="alert-console-body">
-            <p class="alert-bubble alert-bubble-user">Asesoría financiera</p>
-            <p class="alert-bubble alert-bubble-system"><span class="analysis-dot" aria-hidden="true"></span>Basado en “Asesoría financiera”, te sugiero estos códigos.</p>
-            <p class="alert-bubble alert-bubble-system">Código seleccionado: <b>80101504</b><br>Analizando coherencia fiscal…</p>
-            <div class="fiscal-alert-card">
-              <div class="fiscal-alert-heading"><span class="fiscal-warning-icon" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3 2.8 20h18.4L12 3Z"/><path d="M12 9v5"/><path d="M12 17.5v.1"/></svg></span><div><span>Atención</span><strong>Este concepto podría llevar retenciones.</strong></div></div>
-              <p>Rosario te muestra las opciones antes de crear el CFDI; tú decides cómo continuar.</p>
-              <div class="fiscal-alert-options" aria-label="Opciones de retención">
-                <span>Retención ISR</span><span>Retención IVA</span><span>Ambas</span><span>Continuar sin retenciones</span>
-              </div>
-            </div>
-            <div class="context-alerts" aria-label="Otras alertas posibles">
-              <div><span class="context-alert-icon context-activity" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5h16v14H4Z"/><path d="M8 9h8M8 13h5"/></svg></span><p><b>Actividad económica</b>Si no coincide, te muestra la actividad más cercana y te deja corregir.</p></div>
-              <div><span class="context-alert-icon context-property" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 19V5h16v14H4Z"/><path d="M8 9h8M8 13h5"/></svg></span><p><b>Datos del concepto</b>Actividad validada; después pide unidad, cantidad, precio e IVA.</p></div>
-            </div>
-          </div>
-          <p class="alert-console-note">Rosario alerta y solicita confirmación; para casos particulares, consulta a tu contador.</p>
+        <div class="case-chat-demo alert-review-demo" id="revision-demo" data-case-chat="revision" data-reveal="right" aria-label="Demostración interactiva de la revisión fiscal de Rosario">
+          <div class="case-chat-header"><span class="case-chat-avatar"><img src="assets/images/logo.png" alt=""></span><div><strong>Rosario</strong><small>Revisión antes de timbrar</small></div><span class="case-chat-demo-label">Chat censurado</span></div>
+          <div class="case-chat-body" role="log" aria-live="polite" data-case-chat-body></div>
+          <div class="case-chat-controls"><button type="button" aria-label="Ver paso anterior" data-case-prev disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="case-chat-progress" data-case-progress></span><button type="button" data-case-next><span data-case-next-label>Siguiente</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
         </div>
       </div>
     </section>
@@ -245,24 +226,36 @@
             <div class="tab-copy"><h3>Factura sin aprender catálogos.</h3><p>Describe el servicio con tus propias palabras. La IA prepara los datos fiscales y te pide confirmación antes de timbrar.</p><ul class="mini-list"><li>Sugerencia de clave SAT</li><li>Validación de actividad económica</li><li>Entrega de PDF y XML</li></ul></div>
             <div class="workflow"><div class="flow-msg user">Factura $8,500 por diseño de identidad visual.</div><div class="flow-msg">Encontré la clave sugerida y revisé el régimen del cliente.<small>¿Confirmas los datos para timbrar?</small></div><div class="flow-msg user">Sí, confirma.</div><div class="flow-msg"><b class="ok inline-status"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-check-circle-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>Factura lista.</b> Ya envié los archivos.</div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
             <div class="real-tab-content">
-              <div class="tab-copy"><span class="example-chip">Secuencia del chat</span><h3>Elige los datos de la factura antes de agregar el concepto.</h3><p>Rosario pide RFC emisor, receptor, confirmación de correos y uso CFDI. Después propone códigos a partir de la descripción que escribiste.</p><ul class="mini-list"><li>Selección de emisor y receptor</li><li>Confirmación de correos y uso CFDI</li><li>Códigos sugeridos, unidad, cantidad, precio e IVA</li></ul></div>
-              <div class="workflow"><div class="flow-msg user">Facturar Ingreso</div><div class="flow-msg">Primero selecciona el RFC emisor.<small>¿Desde qué RFC quieres emitir la factura?</small></div><div class="flow-msg">Receptor seleccionado. ¿Son correctos los correos?<small>Selecciona el uso del CFDI para continuar.</small></div><div class="flow-msg user">Asesoría financiera</div><div class="flow-msg">Basado en “Asesoría financiera”, te sugiero estos códigos.<small>Código seleccionado: 80101504 · Analizando coherencia fiscal…</small></div><div class="flow-msg flow-msg-alert"><b>¡Atención!</b> El concepto “Asesoría financiera” podría llevar retenciones.<small>1. Sólo ISR · 2. Sólo IVA · 3. Ambas · 4. Continuar sin retenciones</small></div><div class="flow-msg user">4. No, continuar sin retenciones</div><div class="flow-msg"><b class="ok inline-status">Entendido, este concepto no tendrá retenciones.</b><small>Te recomendamos consultar esta operación con tu contador.</small></div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
+              <div class="tab-copy"><span class="example-chip">Demo interactiva</span><h3>Elige los datos de la factura antes de agregar el concepto.</h3><p>Avanza por una conversación real anonimizada: Rosario solicita emisor, receptor, concepto, impuestos y confirmación antes de timbrar.</p><ul class="mini-list"><li>Selección de emisor y receptor</li><li>Validación fiscal del concepto</li><li>Confirmación, timbrado y envío por correo</li></ul></div>
+              <div class="case-chat-demo" data-case-chat="factura" aria-label="Demostración interactiva de emisión de factura">
+                <div class="case-chat-header"><span class="case-chat-avatar"><img src="assets/images/logo.png" alt=""></span><div><strong>Factura IA</strong><small>Rosario · en línea</small></div><span class="case-chat-demo-label">Demo</span></div>
+                <div class="case-chat-body" role="log" aria-live="polite" data-case-chat-body></div>
+                <div class="case-chat-controls"><button type="button" aria-label="Ver paso anterior" data-case-prev disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="case-chat-progress" data-case-progress></span><button type="button" data-case-next><span data-case-next-label>Siguiente</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+              </div>
             </div>
           </div>
           <div class="tab-panel" id="panel-complemento" role="tabpanel" aria-labelledby="tab-complemento" data-panel="complemento" hidden>
             <div class="tab-copy"><h3>El complemento se relaciona solo.</h3><p>Reenvía el comprobante. Factura IA busca la factura correcta por monto, ordenante y receptor.</p><ul class="mini-list"><li>Relaciona uno o varios CFDI</li><li>Cuadra el total del depósito</li><li>Genera y entrega el complemento</li></ul></div>
             <div class="workflow"><div class="flow-msg user">Adjunto depósito por $14,300.</div><div class="flow-msg">Encontré 3 facturas relacionadas.<small>$5,800 + $4,500 + $4,000</small></div><div class="flow-msg"><b class="ok inline-status"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-check-circle-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>Total cuadrado.</b> Preparando complemento…</div><div class="flow-msg"><b>Complemento listo.</b> PDF enviado a WhatsApp y XML por correo.</div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
             <div class="real-tab-content">
-              <div class="tab-copy"><span class="example-chip">Secuencia del chat</span><h3>Registra el pago y después elige la factura pendiente.</h3><p>El flujo inicia con los datos del pago, permite buscar una factura emitida y muestra su aplicación antes de pedir autorización para timbrar.</p><ul class="mini-list"><li>Monto, fecha y forma de pago real</li><li>Búsqueda por RFC, fecha o monto total</li><li>Saldo anterior, monto aplicado y saldo insoluto</li></ul></div>
-              <div class="workflow"><div class="flow-msg user">Complemento Pago</div><div class="flow-msg">Elige una opción:<small>1. Enviar comprobante · 2. Indicar datos del pago</small></div><div class="flow-msg user">2. Indicar datos del pago</div><div class="flow-msg">Ingresa monto, fecha y forma de pago.<small>Datos registrados: forma de pago 03 · Transferencia.</small></div><div class="flow-msg">¿Cómo deseas buscar la factura?<small>Buscar en facturas emitidas con nosotros o enviar el PDF original.</small></div><div class="flow-msg">Buscar factura pendiente para complemento de pago.<small>RFC del cliente · Fecha · Monto total</small></div><div class="flow-msg">El pago quedó completamente aplicado considerando la tolerancia permitida.<small>¿Deseas timbrar el complemento de pago?</small></div><div class="flow-msg user">Sí, timbrar complemento</div><div class="flow-msg"><b class="ok inline-status">Complemento timbrado exitosamente.</b><small>Procesando archivos y enviando copia al correo.</small></div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
+              <div class="tab-copy"><span class="example-chip">Demo interactiva</span><h3>Sube el PDF del pago y deja que Rosario capture los datos.</h3><p>Recorre el flujo desde el comprobante adjunto hasta la identificación de la factura y el timbrado exitoso del complemento.</p><ul class="mini-list"><li>Lectura del comprobante PDF</li><li>Extracción de monto, fecha y referencia</li><li>Confirmación de factura, saldo y nuevo folio</li></ul></div>
+              <div class="case-chat-demo" data-case-chat="complemento" aria-label="Demostración interactiva de complemento de pago">
+                <div class="case-chat-header"><span class="case-chat-avatar"><img src="assets/images/logo.png" alt=""></span><div><strong>Factura IA</strong><small>Rosario · en línea</small></div><span class="case-chat-demo-label">Demo</span></div>
+                <div class="case-chat-body" role="log" aria-live="polite" data-case-chat-body></div>
+                <div class="case-chat-controls"><button type="button" aria-label="Ver paso anterior" data-case-prev disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="case-chat-progress" data-case-progress></span><button type="button" data-case-next><span data-case-next-label>Siguiente</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+              </div>
             </div>
           </div>
           <div class="tab-panel" id="panel-reporte" role="tabpanel" aria-labelledby="tab-reporte" data-panel="reporte" hidden>
             <div class="tab-copy"><h3>Tu mes, ordenado automáticamente.</h3><p>Recibe un resumen de facturas y complementos o pídelo por mensaje cuando lo necesites.</p><ul class="mini-list"><li>Resumen mensual</li><li>Archivos PDF y Excel</li><li>Consulta desde el mismo chat</li></ul></div>
             <div class="workflow"><div class="flow-msg user">Envíame el reporte de junio.</div><div class="flow-msg">Preparando tus facturas y complementos…</div><div class="flow-msg"><b class="ok inline-status"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="svg-icon bi bi-check-circle-fill" viewBox="0 0 16 16" aria-hidden="true" focusable="false" role="img"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/></svg>Reporte listo.</b><small>PDF ejecutivo + Excel con detalle.</small></div><div class="flow-msg user">Perfecto, gracias.</div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
             <div class="real-tab-content">
-              <div class="tab-copy"><span class="example-chip">Secuencia del chat</span><h3>El reporte se solicita desde Administrador.</h3><p>Rosario muestra el menú de Administrador, genera el reporte en PDF y Excel, envía el archivo y confirma el correo de la copia de datos.</p><ul class="mini-list"><li>Menú de Administrador</li><li>Reporte de Facturas</li><li>PDF enviado y copia del Excel por correo</li></ul></div>
-              <div class="workflow"><div class="flow-msg user">Administrador</div><div class="flow-msg">Menú de Administrador.<small>Descargar Facturas · Añadir receptor · Reporte de Facturas</small></div><div class="flow-msg user">Reporte de Facturas</div><div class="flow-msg">Generando reporte (PDF y Excel), esto puede tomar unos segundos…</div><div class="flow-msg">Enviando copia con el Excel de datos al correo registrado…</div><div class="flow-msg"><b class="ok inline-status">Reporte enviado.</b><small>PDF compartido y correo enviado con éxito.</small></div><div class="flow-progress" aria-hidden="true"><span></span></div></div>
+              <div class="tab-copy"><span class="example-chip">Demo interactiva</span><h3>El reporte se solicita desde Administrador.</h3><p>Observa cómo Rosario genera el PDF y Excel, comparte el archivo y confirma la copia enviada al correo registrado.</p><ul class="mini-list"><li>Menú de Administrador</li><li>Generación de PDF y Excel</li><li>Archivo y correo confirmados</li></ul></div>
+              <div class="case-chat-demo" data-case-chat="reporte" aria-label="Demostración interactiva de reporte de facturas">
+                <div class="case-chat-header"><span class="case-chat-avatar"><img src="assets/images/logo.png" alt=""></span><div><strong>Factura IA</strong><small>Rosario · en línea</small></div><span class="case-chat-demo-label">Demo</span></div>
+                <div class="case-chat-body" role="log" aria-live="polite" data-case-chat-body></div>
+                <div class="case-chat-controls"><button type="button" aria-label="Ver paso anterior" data-case-prev disabled><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg></button><span class="case-chat-progress" data-case-progress></span><button type="button" data-case-next><span data-case-next-label>Siguiente</span><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"/></svg></button></div>
+              </div>
             </div>
           </div>
         </div>
